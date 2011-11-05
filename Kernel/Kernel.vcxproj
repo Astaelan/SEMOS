@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="Source\Boot.asm" />
+    <None Include="Source\GDT.asm" />
+    <None Include="Source\IDT.asm" />
+    <None Include="Source\IDTStubs.asm" />
+    <None Include="Source\Kernel.ld" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Source\Core.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\FileSystem.c" />
+    <ClCompile Include="Source\Hardware\ATA\ATADevice.c" />
+    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c" />
+    <ClCompile Include="Source\Hardware\GDT.c" />
+    <ClCompile Include="Source\Hardware\IDT.c" />
+    <ClCompile Include="Source\Hardware\PIC.c" />
+    <ClCompile Include="Source\Hardware\PIT.c" />
+    <ClCompile Include="Source\Hardware\RTC.c" />
+    <ClCompile Include="Source\Hardware\SystemPartition.c" />
+    <ClCompile Include="Source\Hardware\VGAText.c" />
+    <ClCompile Include="Source\Kernel.c" />
+    <ClCompile Include="Source\MBoot.c" />
+    <ClCompile Include="Source\SystemCalls.c" />
+    <ClCompile Include="Source\Utility\COMPortLogger.c" />
+    <ClCompile Include="Source\Utility\List.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\BCDHelper.h" />
+    <ClInclude Include="Include\FileSystem.h" />
+    <ClInclude Include="Include\Hardware\ATA\ATADevice.h" />
+    <ClInclude Include="Include\Hardware\ATA\ATAPIDevice.h" />
+    <ClInclude Include="Include\Hardware\GDT.h" />
+    <ClInclude Include="Include\Hardware\IDT.h" />
+    <ClInclude Include="Include\Hardware\IDTExternalStubs.h" />
+    <ClInclude Include="Include\Hardware\IDTInitializeStubs.h" />
+    <ClInclude Include="Include\Hardware\PIC.h" />
+    <ClInclude Include="Include\Hardware\PIT.h" />
+    <ClInclude Include="Include\Hardware\RTC.h" />
+    <ClInclude Include="Include\Hardware\SystemPartition.h" />
+    <ClInclude Include="Include\Hardware\VGAText.h" />
+    <ClInclude Include="Include\Kernel.h" />
+    <ClInclude Include="Include\MBoot.h" />
+    <ClInclude Include="Include\PortIO.h" />
+    <ClInclude Include="Include\Utility\COMPortLogger.h" />
+    <ClInclude Include="Include\Utility\List.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FACF6CC0-B659-4FD2-8BBD-A377A66CFE7C}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <OutDir />
+    <IntDir />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <OutDir>..\Build\boot</OutDir>
+    <IntDir>Object\</IntDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>nmake /nologo build</NMakeBuildCommandLine>
+    <NMakeOutput>Kernel</NMakeOutput>
+    <NMakeCleanCommandLine>nmake /nologo clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>nmake /nologo rebuild</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>.\include</NMakeIncludeSearchPath>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>nmake /nologo build</NMakeBuildCommandLine>
+    <NMakeOutput>semos.bin</NMakeOutput>
+    <NMakeCleanCommandLine>nmake /nologo clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>nmake /nologo rebuild</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>.\Include;..\Libs\Core\Include</NMakeIncludeSearchPath>
+    <IncludePath>..\Libs\Core\Include;$(IncludePath)</IncludePath>
+    <ReferencePath />
+    <LibraryPath />
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <BuildLog>
+      <Path>
+      </Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <BuildLog>
+      <Path>
+      </Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

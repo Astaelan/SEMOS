@@ -1,0 +1,52 @@
+#include <PortIO.h>
+#include <Hardware/PIC.h>
+#include <Hardware/VGAText.h>
+
+#define PIC_IO_ICW1_ICW4                0x01
+#define PIC_IO_ICW1_SINGLEPIC           0x02
+#define PIC_IO_ICW1_INTERVAL4           0x04
+#define PIC_IO_ICW1_LEVELMODE           0x08
+#define PIC_IO_ICW1_INITIALIZE          0x10
+
+#define PIC_IO_ICW3_MASTER_SLAVE        0x04
+#define PIC_IO_ICW3_SLAVE_MASTER        0x02
+
+#define PIC_IO_ICW4_8086                0x01
+#define PIC_IO_ICW4_AUTOEOI             0x02
+#define PIC_IO_ICW4_SLAVEBUFFERED       0x04
+#define PIC_IO_ICW4_MASTERBUFFERED      0x08
+#define PIC_IO_ICW4_SFNM                0x10
+
+void PIC_Initialize()
+{
+	// ICW 1
+	outb(PIC_IO_MASTER_BASE + PIC_IO_COMMAND, PIC_IO_ICW1_ICW4 | PIC_IO_ICW1_INITIALIZE);
+	IOWAIT();
+	outb(PIC_IO_SLAVE_BASE + PIC_IO_COMMAND, PIC_IO_ICW1_ICW4 | PIC_IO_ICW1_INITIALIZE);
+	IOWAIT();
+
+	// ICW 2
+	outb(PIC_IO_MASTER_BASE + PIC_IO_DATA, PIC_IRQ_MASTER_BASE);
+	IOWAIT();
+	outb(PIC_IO_SLAVE_BASE + PIC_IO_DATA, PIC_IRQ_SLAVE_BASE);
+	IOWAIT();
+
+	// ICW 3
+	outb(PIC_IO_MASTER_BASE + PIC_IO_DATA, PIC_IO_ICW3_MASTER_SLAVE);
+	IOWAIT();
+	outb(PIC_IO_SLAVE_BASE + PIC_IO_DATA, PIC_IO_ICW3_SLAVE_MASTER);
+	IOWAIT();
+
+	// ICW 4
+	outb(PIC_IO_MASTER_BASE + PIC_IO_DATA, PIC_IO_ICW4_8086);
+	IOWAIT();
+	outb(PIC_IO_SLAVE_BASE + PIC_IO_DATA, PIC_IO_ICW4_8086);
+	IOWAIT();
+
+	outb(PIC_IO_MASTER_BASE + PIC_IO_DATA, 0x00);
+	IOWAIT();
+	outb(PIC_IO_SLAVE_BASE + PIC_IO_DATA, 0x00);
+	IOWAIT();
+
+	__asm volatile( "sti" );
+}
