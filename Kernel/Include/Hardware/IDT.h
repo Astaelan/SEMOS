@@ -3,7 +3,8 @@
 
 #include <types.h>
 
-typedef struct {
+typedef struct
+{
    UINT32 ds;
    UINT32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
    UINT32 int_no, err_code;

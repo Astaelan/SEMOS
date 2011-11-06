@@ -5,23 +5,20 @@
 #include <Hardware/VGAText.h>
 #include <Hardware/ATA/ATAPIDevice.h>
 
-#define ATAPIDEVICE_IO_SELECT_28BITPIO          0xE0
-
 #define ATAPIDEVICE_IO_COMMAND_PACKET           0xA0
 #define ATAPIDEVICE_IO_COMMAND_READSECTORS      0xA8
 
 
-UINT32 ATAPIDevice_ReadSectors(ATADevice * pDevice,
-                               UINT32 pLBA28Address,
-                               BYTE pSectors,
-                               PBYTE pBuffer)
+UINT32 ATAPIDevice_ReadSector(ATADevice * pDevice,
+                              UINT32 pLBA28Address,
+                              PBYTE pBuffer)
 {
     /// Clean this up, ATAPI packet commands are 6 words (12 bytes)
     BYTE cmdRead[12] = { ATAPIDEVICE_IO_COMMAND_READSECTORS, 0x00,
                          (pLBA28Address >> 0x18) & 0xFF, (pLBA28Address >> 0x10) & 0xFF,
                          (pLBA28Address >> 0x08) & 0xFF, (pLBA28Address >> 0x00) & 0xFF,
                          0x00, 0x00,
-                         0x00, pSectors,
+                         0x00, 0x01,
                          0x00, 0x00 };
 
     outb(pDevice->BaseRegister + ATADEVICE_IO_SELECT, pDevice->Drive & (1 << 4));

@@ -24,7 +24,15 @@ void Kernel(UINT32 pMBootMagic,
 
 	SystemPartition_Initialize();
 
-    //FILE* fp = fopen("Test", "r");
-    //if (fp) { }
+    printf("Reading /system/boot/grub/menu.lst\n");
+    FILE* fp = fopen("/system/boot/grub/menu.lst", "r");
+    if (fp)
+    {
+        CHAR buf[512];
+        int len = fread(buf, 1, 512, fp);
+        fclose(fp);
+        buf[len] = 0x00;
+        printf(buf);
+    }
 	while (TRUE);
 }

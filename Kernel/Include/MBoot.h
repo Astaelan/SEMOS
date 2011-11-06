@@ -3,7 +3,8 @@
 
 #include <types.h>
 
-typedef struct {
+typedef struct
+{
 	UINT32 flags;
 	UINT32 mem_lower;
 	UINT32 mem_upper;
@@ -30,7 +31,8 @@ typedef struct {
 	UINT16 vbe_interface_len;
 } MBoot;
 
-typedef struct {
+typedef struct
+{
 	UINT32 size;
 	UINT32 addr0;
 	UINT32 addr1;
@@ -39,7 +41,8 @@ typedef struct {
 	UINT32 type;
 } MBootMMap;
 
-typedef struct {
+typedef struct
+{
 	UINT32 Address;
 	UINT32 Length;
 	UINT32 Used;

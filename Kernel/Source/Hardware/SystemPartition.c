@@ -1,13 +1,21 @@
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <PortIO.h>
+#include <FileSystem.h>
 #include <Hardware/SystemPartition.h>
 #include <Hardware/IDT.h>
 #include <Hardware/VGAText.h>
 #include <Hardware/ATA/ATADevice.h>
 #include <Hardware/ATA/ATAPIDevice.h>
 #include <Utility/List.h>
+
+#undef errno
+extern int  errno;
+
+char * strdup(const char *);
+int	strcasecmp(const char *, const char *);
 
 typedef struct
 {
@@ -25,6 +33,13 @@ BOOL SystemPartition_DetectATAPIISO9660(ATADevice * pDevice);
 BOOL SystemPartition_DetectATAPIISO9660SystemPartition(ATADevice * pDevice, UINT32 * pDescriptorSector);
 void SystemPartition_Cache(SystemPartitionCache * pCache);
 
+INT32 SystemPartition_OpenHandler(FileDescriptor * pDescriptor, const char * pPath, INT32 pFlags, mode_t pMode);
+INT32 SystemPartition_CloseHandler(FileDescriptor * pDescriptor);
+off_t SystemPartition_LSeekHandler(FileDescriptor * pDescriptor, off_t pOffset, INT32 pWhence);
+INT32 SystemPartition_WriteHandler(FileDescriptor * pDescriptor, const void * pData, size_t pLength);
+INT32 SystemPartition_ReadHandler(FileDescriptor * pDescriptor, void * pData, size_t pLength);
+
+
 ATADevice * gSystemPartitionDevice = NULL;
 UINT32 gSystemPartitionDescriptorSector = 0;
 SystemPartitionCache gSystemPartitionCache;
@@ -37,7 +52,7 @@ void SystemPartition_Initialize()
     UINT32 rootMountLength = strlen(rootMount);
 
     PBYTE sectorBuffer = (PBYTE)malloc(ATAPIDEVICE_IO_SECTOR_SIZE);
-    ATAPIDevice_ReadSectors(gSystemPartitionDevice, gSystemPartitionDescriptorSector, 1, sectorBuffer);
+    ATAPIDevice_ReadSector(gSystemPartitionDevice, gSystemPartitionDescriptorSector, sectorBuffer);
 
     gSystemPartitionCache.EntrySize = *(sectorBuffer + 156);
     gSystemPartitionCache.LBA = *(UINT32 *)(sectorBuffer + 156 + 2);
@@ -49,6 +64,8 @@ void SystemPartition_Initialize()
     free(sectorBuffer);
 
     SystemPartition_Cache(&gSystemPartitionCache);
+
+    FileSystem_Register(rootMount, &SystemPartition_OpenHandler);
 }
 
 BOOL SystemPartition_Detect()
@@ -118,7 +135,7 @@ BOOL SystemPartition_DetectATA(UINT16 pBaseAddress)
 BOOL SystemPartition_DetectATAPIISO9660(ATADevice * pDevice)
 {
     BYTE sectorBuffer[ATAPIDEVICE_IO_SECTOR_SIZE];
-    UINT32 bytesRead = ATAPIDevice_ReadSectors(pDevice, 0x10, 1, sectorBuffer);
+    UINT32 bytesRead = ATAPIDevice_ReadSector(pDevice, 0x10, sectorBuffer);
     if (bytesRead < 6) return FALSE;
     return sectorBuffer[1] == 'C' && sectorBuffer[2] == 'D' && sectorBuffer[3] == '0' && sectorBuffer[4] == '0' && sectorBuffer[5] == '1';
 }
@@ -128,7 +145,7 @@ BOOL SystemPartition_DetectATAPIISO9660SystemPartition(ATADevice * pDevice,
 {
     UINT32 sector = 0x10;
     BYTE sectorBuffer[ATAPIDEVICE_IO_SECTOR_SIZE];
-    while (ATAPIDevice_ReadSectors(pDevice, sector, 1, sectorBuffer) > 0)
+    while (ATAPIDevice_ReadSector(pDevice, sector, sectorBuffer) > 0)
     {
         ++sector;
         if (sectorBuffer[0] == 0xFF) break;
@@ -147,7 +164,7 @@ void SystemPartition_Cache(SystemPartitionCache * pCache)
     PBYTE sectorBuffer = (PBYTE)malloc(ATAPIDEVICE_IO_SECTOR_SIZE);
     PBYTE sectorBuf = sectorBuffer;
 
-    ATAPIDevice_ReadSectors(gSystemPartitionDevice, pCache->LBA, 1, sectorBuffer);
+    ATAPIDevice_ReadSector(gSystemPartitionDevice, pCache->LBA, sectorBuffer);
 
     BYTE entrySize = *sectorBuf;
     sectorBuf += entrySize;
@@ -184,4 +201,110 @@ void SystemPartition_Cache(SystemPartitionCache * pCache)
         entrySize = *sectorBuf;
     }
     free(sectorBuffer);
+}
+
+SystemPartitionCache * SystemPartition_FindCached(SystemPartitionCache * pCache, const char * pPath)
+{
+    if (!strcasecmp(pCache->Identifier, pPath)) return pCache;
+    for (Node * node = pCache->Entries.Head; node; node = node->Next)
+    {
+        SystemPartitionCache * cache = (SystemPartitionCache *)node->Data;
+        cache = SystemPartition_FindCached(cache, pPath);
+        if (cache) return cache;
+    }
+    return NULL;
+}
+
+INT32 SystemPartition_OpenHandler(FileDescriptor * pDescriptor, const char * pPath, INT32 pFlags, mode_t pMode)
+{
+    SystemPartitionCache * cache = SystemPartition_FindCached(&gSystemPartitionCache, pPath);
+    if (!cache)
+    {
+        errno = EACCES;
+        return -1;
+    }
+    if (pFlags && pMode) { }
+    pDescriptor->Active = TRUE;
+    pDescriptor->BlockStart = cache->LBA;
+    pDescriptor->Mode = S_IFBLK | (S_IREAD >> 3) | (S_IREAD >> 6);
+    pDescriptor->TotalSize = cache->Length;
+    pDescriptor->BlockSize = ATAPIDEVICE_IO_SECTOR_SIZE;
+    pDescriptor->BlockCount = pDescriptor->TotalSize / pDescriptor->BlockSize;
+    if ((pDescriptor->TotalSize % pDescriptor->BlockSize) != 0) ++pDescriptor->BlockCount;
+    pDescriptor->Path = strdup(cache->Identifier);
+    pDescriptor->CloseHandler = &SystemPartition_CloseHandler;
+    pDescriptor->LSeekHandler = &SystemPartition_LSeekHandler;
+    pDescriptor->WriteHandler = &SystemPartition_WriteHandler;
+    pDescriptor->ReadHandler = &SystemPartition_ReadHandler;
+    return pDescriptor->Index;
+}
+
+INT32 SystemPartition_CloseHandler(FileDescriptor * pDescriptor)
+{
+    pDescriptor->Active = FALSE;
+    pDescriptor->Device = 0;
+    pDescriptor->BlockStart = 0;
+    pDescriptor->Mode = 0;
+    pDescriptor->TotalSize = 0;
+    pDescriptor->BlockSize = 0;
+    pDescriptor->BlockCount = 0;
+    pDescriptor->TerminalStream = FALSE;
+    pDescriptor->Offset = 0;
+    free(pDescriptor->Path);
+    pDescriptor->Path = NULL;
+    pDescriptor->CloseHandler = NULL;
+    pDescriptor->LSeekHandler = NULL;
+    pDescriptor->WriteHandler = NULL;
+    pDescriptor->ReadHandler = NULL;
+    return 0;
+}
+
+off_t SystemPartition_LSeekHandler(FileDescriptor * pDescriptor, off_t pOffset, INT32 pWhence)
+{
+    off_t tempOffset = pDescriptor->Offset;
+    switch (pWhence)
+    {
+    case SEEK_SET: tempOffset = pOffset; break;
+    case SEEK_CUR: tempOffset += pOffset; break;
+    case SEEK_END: tempOffset = pDescriptor->TotalSize; break;
+    default:
+        errno = EINVAL;
+        return -1;
+    }
+    if (tempOffset <= 0) pDescriptor->Offset = 0;
+    else if ((UINT32)tempOffset >= pDescriptor->TotalSize) pDescriptor->Offset = pDescriptor->TotalSize;
+    else pDescriptor->Offset = tempOffset;
+    printf("SystemPartition LSeekHandler: %i, %i = %u\n", (INT32)pOffset, pWhence, pDescriptor->Offset);
+    return (off_t)pDescriptor->Offset;
+}
+
+INT32 SystemPartition_WriteHandler(FileDescriptor * pDescriptor, const void * pData, size_t pLength)
+{
+    if (pDescriptor && pData && pLength) { }
+    errno = EBADF;
+    return -1;
+}
+
+INT32 SystemPartition_ReadHandler(FileDescriptor * pDescriptor, void * pData, size_t pLength)
+{
+    PBYTE sectorBuffer = (PBYTE)malloc(ATAPIDEVICE_IO_SECTOR_SIZE);
+    UINT32 dataOffset = 0;
+    UINT32 dataRemaining = pLength;
+    UINT32 currentBlock = pDescriptor->BlockStart + (pDescriptor->Offset / ATAPIDEVICE_IO_SECTOR_SIZE);
+    while (pDescriptor->Offset < pDescriptor->TotalSize && dataRemaining > 0)
+    {
+        UINT32 sectorLength = ATAPIDevice_ReadSector(gSystemPartitionDevice, currentBlock, sectorBuffer);
+        UINT32 sectorOffset = pDescriptor->Offset % ATAPIDEVICE_IO_SECTOR_SIZE;
+        UINT32 sectorUsable = sectorLength - sectorOffset;
+        UINT32 sectorConsumed = dataRemaining;
+        if (sectorConsumed > sectorUsable) sectorConsumed = sectorUsable;
+        if ((pDescriptor->Offset + sectorConsumed) > pDescriptor->TotalSize) sectorConsumed = pDescriptor->TotalSize - pDescriptor->Offset;
+        memcpy(pData + dataOffset, sectorBuffer + sectorOffset, sectorConsumed);
+        pDescriptor->Offset += sectorConsumed;
+        dataOffset += sectorConsumed;
+        dataRemaining -= sectorConsumed;
+        if (pDescriptor->Offset < pDescriptor->TotalSize && dataRemaining > 0) ++currentBlock;
+    }
+    free(sectorBuffer);
+    return dataOffset;
 }

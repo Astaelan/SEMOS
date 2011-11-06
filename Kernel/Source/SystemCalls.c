@@ -13,6 +13,8 @@
 #undef errno
 extern int  errno;
 
+int strncasecmp(const char *, const char *, size_t);
+
 void Halt() { __asm("hlt"); }
 
 void Panic(const PSTRING pMessage)
@@ -66,6 +68,36 @@ INT32 gettimeofday(struct timeval * tv,
 	return 0;
 }
 
+INT32 open(const char * pathname, int flags, mode_t mode)
+{
+    BYTE fd = 0;
+    for (UINT32 index = FILESYSTEM_FILEDESCRIPTOR_RESERVED; index < FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT; ++index)
+    {
+        if (!gFileSystemFileDescriptors[index].Active)
+        {
+            fd = index;
+            break;
+        }
+    }
+    if (fd == 0)
+    {
+        errno = ENFILE;
+        return -1;
+    }
+    FileDescriptor * descriptor = &gFileSystemFileDescriptors[fd];
+
+    size_t pathLength = strlen(pathname);
+    for (Node * node = gFileSystems.Head; node; node = node->Next)
+    {
+        FileSystem * fs = (FileSystem *)node->Data;
+        size_t rootLength = strlen(fs->Root);
+        if (rootLength >= pathLength) continue;
+        if (!strncasecmp(fs->Root, pathname, rootLength)) return fs->OpenHandler(descriptor, pathname, flags, mode);
+    }
+    errno = EACCES;
+    return -1;
+}
+
 INT32 fstat(INT32 fd,
             struct stat *buf)
 {
@@ -87,23 +119,6 @@ INT32 fstat(INT32 fd,
     return 0;
 }
 
-INT32 write(int fd,
-            const void * buf,
-            size_t count)
-{
-    if (fd) { }
-    VGAText_WriteString((PSTRING)buf, count);
-    return (INT32)count;
-}
-
-INT32 close(INT32 fd)
-{
-    Panic("Stopping Close");
-    if (fd) { }
-    errno = EBADF;
-    return -1;
-}
-
 INT32 isatty(INT32 fd)
 {
     if (fd < 0 ||
@@ -121,20 +136,75 @@ INT32 isatty(INT32 fd)
     return 1;
 }
 
+INT32 close(INT32 fd)
+{
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active ||
+        !gFileSystemFileDescriptors[fd].CloseHandler)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    return gFileSystemFileDescriptors[fd].CloseHandler(&gFileSystemFileDescriptors[fd]);
+}
+
+INT32 write(int fd,
+            const void * buf,
+            size_t count)
+{
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    FileDescriptor * descriptor = &gFileSystemFileDescriptors[fd];
+    if (!descriptor->WriteHandler)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    return descriptor->WriteHandler(descriptor, buf, count);
+}
+
 off_t lseek(INT32 fd,
             off_t offset,
             INT32 whence)
 {
-    Panic("Stopping LSeek");
-    if (fd && offset && whence) { }
-    return 0;
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    FileDescriptor * descriptor = &gFileSystemFileDescriptors[fd];
+    if (!descriptor->LSeekHandler)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    return descriptor->LSeekHandler(descriptor, offset, whence);
 }
 
 int read(int fd,
          void * buf,
          size_t count)
 {
-    Panic("Stopping Read");
-    if (fd && buf && count) { }
-    return 0;
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    FileDescriptor * descriptor = &gFileSystemFileDescriptors[fd];
+    if (!descriptor->ReadHandler)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+    return descriptor->ReadHandler(descriptor, buf, count);
 }

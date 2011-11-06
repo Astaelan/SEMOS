@@ -3,13 +3,15 @@
 
 #include <types.h>
 
-typedef struct _Node {
+typedef struct _Node
+{
 	struct _Node * Next;
 	struct _Node * Prev;
 	PVOID Data;
 } Node;
 
-typedef struct {
+typedef struct
+{
 	Node * Head;
 	Node * Tail;
 	UINT32 Count;
