@@ -256,11 +256,13 @@ void exit()
 
 int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int eerrno), glob_t * pglob)
 {
+    printf("GLOB!\n");
     if (pattern && flags && errfunc && pglob) { }
     return GLOB_NOSPACE;
 }
 
 void	globfree(glob_t * pglob)
 {
+    printf("GLOBFREE!\n");
     if (pglob) { }
 }
