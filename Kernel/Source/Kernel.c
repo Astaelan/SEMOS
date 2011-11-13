@@ -1,5 +1,16 @@
 #include <Kernel.h>
 
+#include "Compat.h"
+#include "Sys.h"
+
+#include "CLIFile.h"
+#include "MetaData.h"
+#include "Type.h"
+#include "Heap.h"
+#include "Finalizer.h"
+#include "System.Net.Sockets.Socket.h"
+#include "MethodState.h"
+
 void Kernel(UINT32 pMBootMagic,
             PVOID pMBoot)
 {
@@ -24,15 +35,12 @@ void Kernel(UINT32 pMBootMagic,
 
 	SystemPartition_Initialize();
 
-    printf("Reading /system/boot/grub/menu.lst\n");
-    FILE* fp = fopen("/system/boot/grub/menu.lst", "r");
-    if (fp)
-    {
-        CHAR buf[512];
-        int len = fread(buf, 1, 512, fp);
-        fclose(fp);
-        buf[len] = 0x00;
-        printf(buf);
-    }
-	while (TRUE);
+    printf("Initializing Runtime...\n");
+    JIT_Execute_Init();
+	MetaData_Init();
+	Type_Init();
+	Heap_Init();
+	Finalizer_Init();
+    printf("Ready.\n");
+    while (TRUE);
 }

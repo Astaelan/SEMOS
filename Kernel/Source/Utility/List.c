@@ -27,8 +27,8 @@ void List_RemoveNode(List * pList,
 {
 	if (pNode == pList->Head) pList->Head = pList->Head->Next;
 	if (pNode == pList->Tail) pList->Tail = pList->Tail->Prev;
-	if (pNode->Prev) pNode->Prev = pNode->Next;
-	if (pNode->Next) pNode->Next = pNode->Prev;
+	if (pNode->Prev) pNode->Prev->Next = pNode->Next;
+	if (pNode->Next) pNode->Next->Prev = pNode->Prev;
 	free(pNode);
 }
 

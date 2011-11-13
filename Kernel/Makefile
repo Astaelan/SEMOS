@@ -4,8 +4,9 @@ LD  = ..\Tools\bin\i686-elf-ld
 RM  = ..\Tools\bin\rm
 MKISOFS  = ..\Tools\bin\mkisofs
 MKDIR = ..\Tools\bin\mkdir
-GCCARGS = -I..\Libs\Core\Include -I.\Include -std=c99 -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
-LIB = ..\Libs\Core\Core.lib
+OUT = ..\Build\boot\semos.bin
+GCCARGS = -I..\Libs\Core\Include -I ..\Libs\Runtime\Include -I.\Include -std=c99 -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
+LIB = ..\Libs\Runtime\Runtime.lib ..\Libs\Core\GCC.lib ..\Libs\Core\Core.lib ..\Libs\Core\Math.lib
 OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o Object\Kernel.o Object\SystemCalls.o Object\FileSystem.o \
 	  Object\Utility_COMPortLogger.o Object\Utility_List.o \
 	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \
@@ -13,15 +14,15 @@ OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o O
 	  Object\Hardware_SystemPartition.o Object\Hardware_VGAText.o
 
 build: $(OBJ)
-  $(RM) -rf ..\Build
+  $(RM) -f $(OUT)
   $(MKDIR) -p ..\Build\boot\grub
-  $(LD) -T Source\Kernel.ld -o ..\Build\boot\semos.bin Object\*.o $(LIB)
+  $(LD) -T Source\Kernel.ld -o $(OUT) Object\*.o $(LIB)
   copy /Y ..\Tools\grub\stage2_eltorito ..\Build\boot\grub
   copy /Y ..\Tools\grub\menu.lst ..\Build\boot\grub
   $(MKISOFS) -V SEMOS -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o ..\SEMOS.iso ..\Build
 
 clean:
-  $(RM) -f ..\Build\boot\semos.bin Object\*.o
+  $(RM) -f $(OUT) Object\*.o
 
 rebuild: clean build
 

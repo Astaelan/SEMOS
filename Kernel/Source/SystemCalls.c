@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <glob.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <MBoot.h>
@@ -70,7 +71,15 @@ INT32 gettimeofday(struct timeval * tv,
 
 INT32 open(const char * pathname, int flags, mode_t mode)
 {
+    CHAR pathBuffer[256];
+    if (pathname[0] != '/')
+    {
+        strcpy(pathBuffer, "/SYSTEM/");
+        strcat(pathBuffer, pathname);
+        pathname = pathBuffer;
+    }
     BYTE fd = 0;
+    printf("Opening %s...\n", pathname);
     for (UINT32 index = FILESYSTEM_FILEDESCRIPTOR_RESERVED; index < FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT; ++index)
     {
         if (!gFileSystemFileDescriptors[index].Active)
@@ -98,6 +107,20 @@ INT32 open(const char * pathname, int flags, mode_t mode)
     return -1;
 }
 
+INT32 close(INT32 fd)
+{
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active ||
+        !gFileSystemFileDescriptors[fd].CloseHandler)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    return gFileSystemFileDescriptors[fd].CloseHandler(&gFileSystemFileDescriptors[fd]);
+}
+
+
 INT32 fstat(INT32 fd,
             struct stat *buf)
 {
@@ -119,6 +142,29 @@ INT32 fstat(INT32 fd,
     return 0;
 }
 
+INT32 stat(const char * path,
+           struct stat * buf)
+{
+    INT32 fd = open(path, 0, 0);
+    if (fd < 0 ||
+        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
+        !gFileSystemFileDescriptors[fd].Active)
+    {
+        errno = EBADF;
+        return -1;
+    }
+    buf->st_dev = gFileSystemFileDescriptors[fd].Device;
+    buf->st_ino = gFileSystemFileDescriptors[fd].BlockStart;
+    buf->st_mode = gFileSystemFileDescriptors[fd].Mode;
+    if (buf->st_mode & S_IFREG) buf->st_nlink = 1;
+    else buf->st_rdev = buf->st_dev;
+    buf->st_size = gFileSystemFileDescriptors[fd].TotalSize;
+    buf->st_blksize = gFileSystemFileDescriptors[fd].BlockSize;
+    buf->st_blocks = gFileSystemFileDescriptors[fd].BlockCount;
+    close(fd);
+    return 0;
+}
+
 INT32 isatty(INT32 fd)
 {
     if (fd < 0 ||
@@ -134,19 +180,6 @@ INT32 isatty(INT32 fd)
         return 0;
     }
     return 1;
-}
-
-INT32 close(INT32 fd)
-{
-    if (fd < 0 ||
-        fd >= FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT ||
-        !gFileSystemFileDescriptors[fd].Active ||
-        !gFileSystemFileDescriptors[fd].CloseHandler)
-    {
-        errno = EBADF;
-        return -1;
-    }
-    return gFileSystemFileDescriptors[fd].CloseHandler(&gFileSystemFileDescriptors[fd]);
 }
 
 INT32 write(int fd,
@@ -207,4 +240,27 @@ int read(int fd,
         return -1;
     }
     return descriptor->ReadHandler(descriptor, buf, count);
+}
+
+char * getcwd(char * buf, size_t size)
+{
+    buf[0] = '/';
+    buf[1] = 0x00;
+    if (size) { }
+    return buf;
+}
+
+void exit()
+{
+}
+
+int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int eerrno), glob_t * pglob)
+{
+    if (pattern && flags && errfunc && pglob) { }
+    return GLOB_NOSPACE;
+}
+
+void	globfree(glob_t * pglob)
+{
+    if (pglob) { }
 }
