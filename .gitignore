@@ -7,3 +7,7 @@
 /SEMOS.sdf
 /SEMOS.suo
 /Kernel/Object
+
+/CLR/corlib/bin
+/CLR/corlib/obj
+/CLR/Runtime/Object
