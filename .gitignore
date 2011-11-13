@@ -15,3 +15,6 @@
 /CLR/corlib/obj
 /CLR/Runtime/Object
 /CLR/Runtime/Runtime.log
+
+/CLR/Kernel/bin
+/CLR/Kernel/obj

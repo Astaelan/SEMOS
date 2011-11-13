@@ -36,14 +36,20 @@ void Kernel(UINT32 pMBootMagic,
 
 	SystemPartition_Initialize();
 
-    printf("Initializing Runtime...\n");
-	logLevel+= 2;
+    printf("CLR Runtime Initializing\n");
+	logLevel = 0;
 
     JIT_Execute_Init();
 	MetaData_Init();
 	Type_Init();
 	Heap_Init();
 	Finalizer_Init();
-    printf("Ready.\n");
+    printf("CLR Runtime Initialized\n");
+
+	tCLIFile *cliFile = CLIFile_Load("/SYSTEM/KERNEL.EXE");
+    if (cliFile) printf("Loaded Kernel.exe\n");
+	INT32 retValue = CLIFile_Execute(cliFile, 0, NULL);
+    printf("Executed Kernel.exe: %d\n", retValue);
+    if (retValue) { }
     while (TRUE);
 }

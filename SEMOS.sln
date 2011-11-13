@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime", "CLR\Runtime\Runt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "CLR\corlib\corlib.csproj", "{6A77A7C0-FB66-4CAA-94EE-142DBA20655D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kernel", "CLR\Kernel\Kernel.csproj", "{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,24 @@ Global
 		{6A77A7C0-FB66-4CAA-94EE-142DBA20655D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6A77A7C0-FB66-4CAA-94EE-142DBA20655D}.Release|Win32.ActiveCfg = Release|Any CPU
 		{6A77A7C0-FB66-4CAA-94EE-142DBA20655D}.Release|x86.ActiveCfg = Release|Any CPU
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|Win32.ActiveCfg = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|x86.ActiveCfg = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Debug|x86.Build.0 = Debug|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|Any CPU.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|Mixed Platforms.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|Mixed Platforms.Build.0 = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|Win32.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|x86.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.LocalTest|x86.Build.0 = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|Any CPU.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|Win32.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|x86.ActiveCfg = Release|x86
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +110,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DF87B924-A088-4DDA-903C-8A5D2C3C3042} = {29CA2049-2016-446F-8EC7-823EF3087DA7}
 		{6A77A7C0-FB66-4CAA-94EE-142DBA20655D} = {29CA2049-2016-446F-8EC7-823EF3087DA7}
+		{B287699F-0DBF-4D2F-BDA8-3BECE31727FF} = {29CA2049-2016-446F-8EC7-823EF3087DA7}
 	EndGlobalSection
 EndGlobal

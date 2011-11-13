@@ -252,6 +252,7 @@ char * getcwd(char * buf, size_t size)
 
 void exit()
 {
+    printf("EXIT!\n");
 }
 
 int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int eerrno), glob_t * pglob)

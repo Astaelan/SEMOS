@@ -32,6 +32,7 @@ tAsyncCall* System_Console_Write(PTR pThis_, PTR pParams, PTR pReturnValue) {
 	STRING2 str;
 	U32 i, strLen;
 
+    printf("SYSTEM.CONSOLE.WRITE!\n");
 	string = *(HEAP_PTR*)pParams;
 	if (string != NULL) {
 #define SUB_LEN 128
