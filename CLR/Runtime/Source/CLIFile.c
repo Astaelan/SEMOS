@@ -104,7 +104,8 @@ static void* LoadFileFromDisk(char *pFileName) {
 	return pData;
 }
 
-static tCLIFile* LoadPEFile(void *pData) {
+static tCLIFile* LoadPEFile(void *pData)
+{
 	tCLIFile *pRet = TMALLOC(tCLIFile);
 
 	unsigned char *pMSDOSHeader = (unsigned char*)&(((unsigned char*)pData)[0]);
@@ -167,41 +168,65 @@ static tCLIFile* LoadPEFile(void *pData) {
 		ofs = 16 + versionLen;
 		numberOfStreams = *(unsigned short*)&(pRawMetaData[ofs + 2]);
 		ofs += 4;
-
-		for (i=0; i<(signed)numberOfStreams; i++) {
+		
+		log_f(2, "Number Of Streams: %d \n", numberOfStreams);
+		for (i=0; i<(signed)numberOfStreams; i++) 
+		{
 			unsigned int streamOffset = *(unsigned int*)&pRawMetaData[ofs];
 			unsigned int streamSize = *(unsigned int*)&pRawMetaData[ofs+4];
 			unsigned char *pStreamName = &pRawMetaData[ofs+8];
 			void *pStream = pRawMetaData + streamOffset;
 			ofs += (unsigned int)((strlen(pStreamName)+4) & (~0x3)) + 8;
-			if (strcasecmp(pStreamName, "#Strings") == 0) {
+			if (strcasecmp(pStreamName, "#Strings") == 0) 
+			{
+				log_f(2, "#Strings at %d \n", streamOffset);
+				log_f(2, "#Strings is %d  bytes \n", streamSize);
 				MetaData_LoadStrings(pMetaData, pStream, streamSize);
-			} else if (strcasecmp(pStreamName, "#US") == 0) {
+			}
+			else if (strcasecmp(pStreamName, "#US") == 0) 
+			{
+				log_f(2, "#US (User Strings) at %d \n", streamOffset);
+				log_f(2, "#US (User Strings) is %d bytes \n", streamSize);
 				MetaData_LoadUserStrings(pMetaData, pStream, streamSize);
-			} else if (strcasecmp(pStreamName, "#Blob") == 0) {
+			}
+			else if (strcasecmp(pStreamName, "#Blob") == 0) 
+			{
+				log_f(2, "#Blob at %d \n", streamOffset);
+				log_f(2, "#Blob is %d bytes \n", streamSize);
 				MetaData_LoadBlobs(pMetaData, pStream, streamSize);
-			} else if (strcasecmp(pStreamName, "#GUID") == 0) {
+			}
+			else if (strcasecmp(pStreamName, "#GUID") == 0) 
+			{
+				log_f(2, "#GUID at %d \n", streamOffset);
+				log_f(2, "#GUID is %d bytes \n", streamSize);
 				MetaData_LoadGUIDs(pMetaData, pStream, streamSize);
-			} else if (strcasecmp(pStreamName, "#~") == 0) {
+			}
+			else if (strcasecmp(pStreamName, "#~") == 0) 
+			{
+				log_f(2, "#~ (MetaData Tables) at %d \n", streamOffset);
+				log_f(2, "#~ (MetaData Tables) is %d bytes \n", streamSize);
 				pTableStream = pStream;
 				tableStreamSize = streamSize;
 			}
 		}
 		// Must load tables last
-		if (pTableStream != NULL) {
+		if (pTableStream != NULL)
+		{
 			MetaData_LoadTables(pMetaData, pRet->pRVA, pTableStream, tableStreamSize);
 		}
 	}
 
 	// Mark all generic definition types and methods as such
-	for (i=pMetaData->tables.numRows[MD_TABLE_GENERICPARAM]; i>0; i--) {
+	for (i=pMetaData->tables.numRows[MD_TABLE_GENERICPARAM]; i>0; i--)
+	{
 		tMD_GenericParam *pGenericParam;
 		IDX_TABLE ownerIdx;
 
 		pGenericParam = (tMD_GenericParam*)MetaData_GetTableRow
 			(pMetaData, MAKE_TABLE_INDEX(MD_TABLE_GENERICPARAM, i));
 		ownerIdx = pGenericParam->owner;
-		switch (TABLE_ID(ownerIdx)) {
+		switch (TABLE_ID(ownerIdx)) 
+		{
 			case MD_TABLE_TYPEDEF:
 				{
 					tMD_TypeDef *pTypeDef = (tMD_TypeDef*)MetaData_GetTableRow(pMetaData, ownerIdx);
@@ -220,7 +245,8 @@ static tCLIFile* LoadPEFile(void *pData) {
 	}
 
 	// Mark all nested classes as such
-	for (i=pMetaData->tables.numRows[MD_TABLE_NESTEDCLASS]; i>0; i--) {
+	for (i=pMetaData->tables.numRows[MD_TABLE_NESTEDCLASS]; i>0; i--) 
+	{
 		tMD_NestedClass *pNested;
 		tMD_TypeDef *pParent, *pChild;
 
@@ -233,14 +259,16 @@ static tCLIFile* LoadPEFile(void *pData) {
 	return pRet;
 }
 
-tCLIFile* CLIFile_Load(char *pFileName) {
+tCLIFile* CLIFile_Load(char *pFileName)
+{
 	void *pRawFile;
 	tCLIFile *pRet;
 	tFilesLoaded *pNewFile;
 
 	pRawFile = LoadFileFromDisk(pFileName);
 
-	if (pRawFile == NULL) {
+	if (pRawFile == NULL)
+	{
 		Crash("Cannot load file: %s", pFileName);
 	}
 
@@ -259,7 +287,8 @@ tCLIFile* CLIFile_Load(char *pFileName) {
 	return pRet;
 }
 
-I32 CLIFile_Execute(tCLIFile *pThis, int argc, char **argp) {
+I32 CLIFile_Execute(tCLIFile *pThis, int argc, char **argp)
+{
 	tThread *pThread;
 	HEAP_PTR args;
 	int i;
@@ -282,11 +311,13 @@ I32 CLIFile_Execute(tCLIFile *pThis, int argc, char **argp) {
 	return Thread_Execute();
 }
 
-void CLIFile_GetHeapRoots(tHeapRoots *pHeapRoots) {
+void CLIFile_GetHeapRoots(tHeapRoots *pHeapRoots)
+{
 	tFilesLoaded *pFile;
 
 	pFile = pFilesLoaded;
-	while (pFile != NULL) {
+	while (pFile != NULL) 
+	{
 		MetaData_GetHeapRoots(pHeapRoots, pFile->pCLIFile->pMetaData);
 		pFile = pFile->pNext;
 	}

@@ -1,4 +1,5 @@
 #include <Hardware/VGAText.h>
+#include <Utility/COMPortLogger.h>
 
 #define VGATEXT_MEMORY_BASE             0x000B8000
 #define VGATEXT_DEFAULT_COLUMNS                 80
@@ -31,6 +32,7 @@ void VGAText_SetAttributes(CHAR pAttributes)
 
 void VGAText_WriteChar(CHAR pCharacter)
 {
+	COMPortLogger_WriteData(pCharacter);
     if (pCharacter == '\n') VGAText_MoveToNextLine();
     else
     {
@@ -62,6 +64,7 @@ void VGAText_WriteLine(const PSTRING pString)
 {
 	VGAText_WriteString(pString, 0);
 	if (gVGATextCursorColumn > 0) VGAText_MoveToNextLine();
+	COMPortLogger_WriteString("\n\0");
 }
 
 void VGAText_MoveTo(BYTE pColumn,

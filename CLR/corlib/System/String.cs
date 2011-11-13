@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 
 namespace System {
-	public class String : ICloneable, IEnumerable, IEnumerable<char>,
+	public class String : ICloneable, IEnumerable,// IEnumerable<char>,
 		IComparable, IComparable<string>, IEquatable<string> {
 
 		public static readonly string Empty = "";
@@ -564,13 +564,14 @@ namespace System {
 
 		#region IEnumerable Members
 
-		public IEnumerator GetEnumerator() {
-			return new CharEnumerator(this);
-		}
+        public IEnumerator GetEnumerator()
+        {
+            return new CharEnumerator(this);
+        }
 
-		IEnumerator<char> IEnumerable<char>.GetEnumerator() {
-			return new CharEnumerator(this);
-		}
+        //IEnumerator<char> IEnumerable<char>.GetEnumerator() {
+        //    return new CharEnumerator(this);
+        //}
 
 		#endregion
 	}

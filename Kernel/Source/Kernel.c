@@ -14,6 +14,9 @@
 void Kernel(UINT32 pMBootMagic,
             PVOID pMBoot)
 {
+	COMPortLogger_Initialize();
+	COMPortLogger_WriteLine("See? It works!");
+
 	VGAText_Clear(VGATEXT_ATTRIBUTES(VGATEXT_ATTRIBUTE_LIGHT_WHITE, VGATEXT_ATTRIBUTE_DARK_BLACK));
 	if (!MBoot_Initialize(pMBootMagic, pMBoot)) Panic("PANIC: Bootloader did not pass valid multiboot data");
 
@@ -30,12 +33,12 @@ void Kernel(UINT32 pMBootMagic,
 	time_t startupTime = time(NULL);
 	printf("Startup @ %s\n", ctime(&startupTime));
 
-	COMPortLogger_Initialize();
-	COMPortLogger_WriteLine("See? It works!");
 
 	SystemPartition_Initialize();
 
     printf("Initializing Runtime...\n");
+	logLevel+= 2;
+
     JIT_Execute_Init();
 	MetaData_Init();
 	Type_Init();

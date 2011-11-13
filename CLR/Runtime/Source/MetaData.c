@@ -27,20 +27,24 @@
 #include "Type.h"
 #include "RVA.h"
 
-unsigned int MetaData_DecodeSigEntry(SIG *pSig) {
+unsigned int MetaData_DecodeSigEntry(SIG *pSig) 
+{
 	unsigned char a,b,c,d;
 	a = *((unsigned char*)*pSig); ++pSig;
-	if ((a & 0x80) == 0) {
+	if ((a & 0x80) == 0) 
+	{
 		// 1-byte entry
 		return a;
 	}
 	// Special case
-	if (a == 0xff) {
+	if (a == 0xff)
+	{
 		return 0;
 	}
 
 	b = *((unsigned char*)*pSig); ++pSig;
-	if ((a & 0xc0) == 0x80) {
+	if ((a & 0xc0) == 0x80) 
+	{
 		// 2-byte entry
 		return ((int)(a & 0x3f)) << 8 | b;
 	}
@@ -50,44 +54,51 @@ unsigned int MetaData_DecodeSigEntry(SIG *pSig) {
 	return ((int)(a & 0x1f)) << 24 | ((int)b) << 16 | ((int)c) << 8 | d;
 }
 
-IDX_TABLE MetaData_DecodeSigEntryToken(SIG *pSig) {
+IDX_TABLE MetaData_DecodeSigEntryToken(SIG *pSig)
+{
 	static U8 tableID[4] = {MD_TABLE_TYPEDEF, MD_TABLE_TYPEREF, MD_TABLE_TYPESPEC, 0};
 
 	U32 entry = MetaData_DecodeSigEntry(pSig);
 	return MAKE_TABLE_INDEX(tableID[entry & 0x3], entry >> 2);
 }
 
-tMetaData* MetaData() {
+tMetaData* MetaData() 
+{
 	tMetaData *pRet = TMALLOC(tMetaData);
 	memset(pRet, 0, sizeof(tMetaData));
 	return pRet;
 }
 
-void MetaData_LoadStrings(tMetaData *pThis, void *pStream, unsigned int streamLen) {
+void MetaData_LoadStrings(tMetaData *pThis, void *pStream, unsigned int streamLen) 
+{
 	pThis->strings.pStart = (unsigned char*)pStream;
 
 	log_f(1, "Loaded strings\n");
 }
 
-unsigned int MetaData_DecodeHeapEntryLength(unsigned char **ppHeapEntry) {
+unsigned int MetaData_DecodeHeapEntryLength(unsigned char **ppHeapEntry)
+{
 	return MetaData_DecodeSigEntry((SIG*)ppHeapEntry);
 }
 
-void MetaData_LoadBlobs(tMetaData *pThis, void *pStream, unsigned int streamLen) {
+void MetaData_LoadBlobs(tMetaData *pThis, void *pStream, unsigned int streamLen)
+{
 	pThis->blobs.pStart = (unsigned char*)pStream;
 
 	log_f(1, "Loaded blobs\n");
 
 }
 
-void MetaData_LoadUserStrings(tMetaData *pThis, void *pStream, unsigned int streamLen) {
+void MetaData_LoadUserStrings(tMetaData *pThis, void *pStream, unsigned int streamLen) 
+{
 	pThis->userStrings.pStart = (unsigned char*)pStream;
 
 	log_f(1, "Loaded User Strings\n");
 
 }
 
-void MetaData_LoadGUIDs(tMetaData *pThis, void *pStream, unsigned int streamLen) {
+void MetaData_LoadGUIDs(tMetaData *pThis, void *pStream, unsigned int streamLen)
+{
 	pThis->GUIDs.numGUIDs = streamLen / 16;
 
 	// This is stored -16 because numbering starts from 1. This means that a simple indexing calculation
@@ -135,7 +146,8 @@ Destination:
 	s: 16-bit value
 	c: 8-bit value
 */
-static char* tableDefs[] = {
+static char* tableDefs[] = 
+{
 	// 0x00
 	"sxS*G*GxGx",
 	// 0x01
@@ -238,7 +250,8 @@ static char* tableDefs[] = {
 // Coded indexes use this lookup table.
 // Note that the extra 'z' characters are important!
 // (Because of how the lookup works each string must be a power of 2 in length)
-static unsigned char* codedTags[] = {
+static unsigned char* codedTags[] = 
+{
 	// TypeDefOrRef
 	"\x02\x01\x1Bz",
 	// HasConstant
@@ -267,20 +280,24 @@ static unsigned char* codedTags[] = {
 	"\x02\x06",
 };
 
-static unsigned char codedTagBits[] = {
+static unsigned char codedTagBits[] = 
+{
 	2, 2, 5, 1, 2, 3, 1, 1, 1, 2, 3, 2, 1
 };
 
 static unsigned char tableRowSize[MAX_TABLES];
 
-void MetaData_Init() {
+void MetaData_Init() 
+{
 	U32 i;
-	for (i=0; i<MAX_TABLES; i++) {
+	for (i=0; i<MAX_TABLES; i++)
+	{
 		tableRowSize[i] = 0;
 	}
 }
 
-static unsigned int GetU16(unsigned char *pSource) {
+static unsigned int GetU16(unsigned char *pSource) 
+{
 	unsigned int a,b;
 
 	a = pSource[0];
@@ -288,7 +305,8 @@ static unsigned int GetU16(unsigned char *pSource) {
 	return a | (b << 8);
 }
 
-static unsigned int GetU32(unsigned char *pSource) {
+static unsigned int GetU32(unsigned char *pSource) 
+{
 	unsigned int a,b,c,d;
 
 	a = pSource[0];
@@ -299,7 +317,8 @@ static unsigned int GetU32(unsigned char *pSource) {
 }
 
 // Loads a single table, returns pointer to table in memory.
-static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **ppTable) {
+static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **ppTable) 
+{
 	int numRows = pThis->tables.numRows[tableID];
 	int rowLen = 0; // Number of bytes taken by each row in memory.
 	int i, row;
@@ -311,9 +330,12 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 	unsigned int v;
 
 	// Calculate the destination row size from table definition, if it hasn't already been calculated
-	if (tableRowSize[tableID] == 0) {
-		for (i=0; i<defLen; i += 2) {
-			switch (pDef[i+1]) {
+	if (tableRowSize[tableID] == 0) 
+	{
+		for (i=0; i<defLen; i += 2)
+		{
+			switch (pDef[i+1])
+			{
 				case '*':
 					rowLen += 4;
 					break;
@@ -331,7 +353,9 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 			}
 		}
 		tableRowSize[tableID] = rowLen;
-	} else {
+	} 
+	else 
+	{
 		rowLen = tableRowSize[tableID];
 	}
 
@@ -339,22 +363,31 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 	pDest = pRet = malloc(numRows * rowLen);
 
 	// Load table
-	for (row=0; row<numRows; row++) {
-		for (i=0; i<defLen; i += 2) {
+	for (row=0; row<numRows; row++)
+	{
+		for (i=0; i<defLen; i += 2) 
+		{
 			unsigned char d = pDef[i];
-			if (d < MAX_TABLES) {
-				if (pThis->tables.numRows[d] < 0x10000) {
+			if (d < MAX_TABLES)
+			{
+				if (pThis->tables.numRows[d] < 0x10000)
+				{
 					// Use 16-bit offset
 					v = GetU16(pSource);
 					pSource += 2;
-				} else {
+				}
+				else 
+				{
 					// Use 32-bit offset
 					v = GetU32(pSource);
 					pSource += 4;
 				}
 				v |= d << 24;
-			} else {
-				switch (d) {
+			} 
+			else
+			{
+				switch (d)
+				{
 					case 'c': // 8-bit value
 						v = *(U8*)pSource;
 						pSource++;
@@ -386,15 +419,19 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 							int tagBits = codedTagBits[ofs];
 							unsigned char tag = *pSource & ((1 << tagBits) - 1);
 							int idxIntoTableID = pCoding[tag]; // The actual table index that we're looking for
-							if (idxIntoTableID < 0 || idxIntoTableID > MAX_TABLES) {
+							if (idxIntoTableID < 0 || idxIntoTableID > MAX_TABLES)
+							{
 								printf("Error: Bad table index: 0x%02x\n", idxIntoTableID);
 								exit(1);
 							}
-							if (pThis->tables.codedIndex32Bit[ofs]) {
+							if (pThis->tables.codedIndex32Bit[ofs])
+							{
 								// Use 32-bit number
 								v = GetU32(pSource) >> tagBits;
 								pSource += 4;
-							} else {
+							} 
+							else 
+							{
 								// Use 16-bit number
 								v = GetU16(pSource) >> tagBits;
 								pSource += 2;
@@ -453,7 +490,8 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 						Crash("Cannot handle MetaData source definition character '%c' (0x%02X)\n", d, d);
 				}
 			}
-			switch (pDef[i+1]) {
+			switch (pDef[i+1])
+			{
 				case '*':
 					*(unsigned int*)pDest = v;
 					pDest += 4;
@@ -483,7 +521,8 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 	return pRet;
 }
 
-void MetaData_LoadTables(tMetaData *pThis, tRVA *pRVA, void *pStream, unsigned int streamLen) {
+void MetaData_LoadTables(tMetaData *pThis, tRVA *pRVA, void *pStream, unsigned int streamLen)
+{
 	U64 valid, j;
 	unsigned char c;
 	int i, k, numTables;
@@ -498,34 +537,45 @@ void MetaData_LoadTables(tMetaData *pThis, tRVA *pRVA, void *pStream, unsigned i
 
 	// Count how many tables there are, and read in all the number of rows of each table.
 	numTables = 0;
-	for (i=0, j=1; i<MAX_TABLES; i++, j <<= 1) {
-		if (valid & j) {
+	for (i=0, j=1; i<MAX_TABLES; i++, j <<= 1)
+	{
+		if (valid & j)
+		{
 			pThis->tables.numRows[i] = *(unsigned int*)&((char*)pStream)[24 + numTables * 4];
 			numTables++;
-		} else {
+		} 
+		else
+		{
 			pThis->tables.numRows[i] = 0;
 			pThis->tables.data[i] = NULL;
 		}
 	}
 
 	// Determine if each coded index lookup type needs to use 16 or 32 bit indexes
-	for (i=0; i<13; i++) {
+	for (i=0; i<13; i++)
+	{
 		char* pCoding = codedTags[i];
 		int tagBits = codedTagBits[i];
 		// Discover max table size
 		unsigned int maxTableLen = 0;
-		for (k=0; k < (1<<tagBits); k++) {
+		for (k=0; k < (1<<tagBits); k++)
+		{
 			unsigned char t = pCoding[k];
-			if (t != 'z') {
-				if (pThis->tables.numRows[t] > maxTableLen) {
+			if (t != 'z')
+			{
+				if (pThis->tables.numRows[t] > maxTableLen)
+				{
 					maxTableLen = pThis->tables.numRows[t];
 				}
 			}
 		}
-		if (maxTableLen < (unsigned)(1 << (16 - tagBits))) {
+		if (maxTableLen < (unsigned)(1 << (16 - tagBits)))
+		{
 			// Use 16-bit number
 			pThis->tables.codedIndex32Bit[i] = 0;
-		} else {
+		} 
+		else 
+		{
 			// Use 32-bit number
 			pThis->tables.codedIndex32Bit[i] = 1;
 		}
@@ -533,9 +583,12 @@ void MetaData_LoadTables(tMetaData *pThis, tRVA *pRVA, void *pStream, unsigned i
 
 	pTable = &((char*)pStream)[24 + numTables * 4];
 
-	for (i=0; i<MAX_TABLES; i++) {
-		if (pThis->tables.numRows[i] > 0) {
-			if (i*4 >= sizeof(tableDefs) || tableDefs[i] == NULL) {
+	for (i=0; i<MAX_TABLES; i++)
+	{
+		if (pThis->tables.numRows[i] > 0)
+		{
+			if (i*4 >= sizeof(tableDefs) || tableDefs[i] == NULL)
+			{
 				printf("No table definition for MetaData table 0x%02x\n", i);
 				exit(1);
 			}
@@ -544,29 +597,35 @@ void MetaData_LoadTables(tMetaData *pThis, tRVA *pRVA, void *pStream, unsigned i
 	}
 }
 
-PTR MetaData_GetBlob(BLOB_ blob, U32 *pBlobLength) {
+PTR MetaData_GetBlob(BLOB_ blob, U32 *pBlobLength) 
+{
 	unsigned int len = MetaData_DecodeHeapEntryLength(&blob);
-	if (pBlobLength != NULL) {
+	if (pBlobLength != NULL)
+	{
 		*pBlobLength = len;
 	}
 	return blob;
 }
 
 // Returns length in bytes, not characters
-STRING2 MetaData_GetUserString(tMetaData *pThis, IDX_USERSTRINGS index, unsigned int *pStringLength) {
+STRING2 MetaData_GetUserString(tMetaData *pThis, IDX_USERSTRINGS index, unsigned int *pStringLength)
+{
 	unsigned char *pString = pThis->userStrings.pStart + (index & 0x00ffffff);
 	unsigned int len = MetaData_DecodeHeapEntryLength(&pString);
-	if (pStringLength != NULL) {
+	if (pStringLength != NULL)
+	{
 		// -1 because of extra terminating character in the heap
 		*pStringLength = len - 1;
 	}
 	return (STRING2)pString;
 }
 
-void* MetaData_GetTableRow(tMetaData *pThis, IDX_TABLE index) {
+void* MetaData_GetTableRow(tMetaData *pThis, IDX_TABLE index) 
+{
 	char *pData;
 	
-	if (TABLE_OFS(index) == 0) {
+	if (TABLE_OFS(index) == 0)
+	{
 		return NULL;
 	}
 	pData = (char*)pThis->tables.data[TABLE_ID(index)];
@@ -574,10 +633,12 @@ void* MetaData_GetTableRow(tMetaData *pThis, IDX_TABLE index) {
 	return pData + (TABLE_OFS(index) - 1) * tableRowSize[TABLE_ID(index)];
 }
 
-void MetaData_GetConstant(tMetaData *pThis, IDX_TABLE idx, PTR pResultMem) {
+void MetaData_GetConstant(tMetaData *pThis, IDX_TABLE idx, PTR pResultMem) 
+{
 	tMD_Constant *pConst;
 
-	switch (TABLE_ID(idx)) {
+	switch (TABLE_ID(idx))
+	{
 	case MD_TABLE_FIELDDEF:
 		{
 			tMD_FieldDef *pField = (tMD_FieldDef*)MetaData_GetTableRow(pThis, idx);
@@ -588,7 +649,8 @@ void MetaData_GetConstant(tMetaData *pThis, IDX_TABLE idx, PTR pResultMem) {
 		Crash("MetaData_GetConstant() Cannot handle idx: 0x%08x", idx);
 	}
 
-	switch (pConst->type) {
+	switch (pConst->type) 
+	{
 	case ELEMENT_TYPE_I4:
 		//*(U32*)pReturnMem = MetaData_DecodeSigEntry(
 		memcpy(pResultMem, pConst->value+1, 4);
@@ -599,19 +661,25 @@ void MetaData_GetConstant(tMetaData *pThis, IDX_TABLE idx, PTR pResultMem) {
 
 }
 
-void MetaData_GetHeapRoots(tHeapRoots *pHeapRoots, tMetaData *pMetaData) {
+void MetaData_GetHeapRoots(tHeapRoots *pHeapRoots, tMetaData *pMetaData) 
+{
 	U32 i, top;
 	// Go through all types, getting their static variables.
 
 	top = pMetaData->tables.numRows[MD_TABLE_TYPEDEF];
-	for (i=1; i<=top; i++) {
+	for (i=1; i<=top; i++) 
+	{
 		tMD_TypeDef *pTypeDef;
 
 		pTypeDef = (tMD_TypeDef*)MetaData_GetTableRow(pMetaData, MAKE_TABLE_INDEX(MD_TABLE_TYPEDEF, i));
-		if (pTypeDef->isGenericDefinition) {
+		if (pTypeDef->isGenericDefinition) 
+		{
 			Generic_GetHeapRoots(pHeapRoots, pTypeDef);
-		} else {
-			if (pTypeDef->staticFieldSize > 0) {
+		} 
+		else 
+		{
+			if (pTypeDef->staticFieldSize > 0)
+			{
 				Heap_SetRoots(pHeapRoots, pTypeDef->pStaticFields, pTypeDef->staticFieldSize);
 			}
 		}

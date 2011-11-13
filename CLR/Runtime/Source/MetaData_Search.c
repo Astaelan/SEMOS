@@ -185,7 +185,8 @@ tMD_TypeDef* MetaData_GetTypeDefFromName(tMetaData *pMetaData, STRING nameSpace,
 	FAKE_RETURN;
 }
 
-tMD_TypeDef* MetaData_GetTypeDefFromFullName(STRING assemblyName, STRING nameSpace, STRING name) {
+tMD_TypeDef* MetaData_GetTypeDefFromFullName(STRING assemblyName, STRING nameSpace, STRING name)
+{
 	tMetaData *pTypeMetaData;
 
 	pTypeMetaData = CLIFile_GetMetaDataForAssembly(assemblyName);

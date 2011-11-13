@@ -64,8 +64,10 @@ char* Sys_GetMethodDesc(tMD_MethodDef *pMethod) {
 	U32 i;
 
 	sprintf(methodName, "%s.%s.%s(", pMethod->pParentType->nameSpace, pMethod->pParentType->name, pMethod->name);
-	for (i=METHOD_ISSTATIC(pMethod)?0:1; i<pMethod->numberOfParameters; i++) {
-		if (i > (U32)(METHOD_ISSTATIC(pMethod)?0:1)) {
+	for (i=METHOD_ISSTATIC(pMethod)?0:1; i<pMethod->numberOfParameters; i++) 
+	{
+		if (i > (U32)(METHOD_ISSTATIC(pMethod)?0:1))
+		{
 			sprintf(strchr(methodName, 0), ",");
 		}
 		sprintf(strchr(methodName, 0), pMethod->pParams[i].pTypeDef->name);
@@ -76,9 +78,10 @@ char* Sys_GetMethodDesc(tMD_MethodDef *pMethod) {
 
 static U32 mallocForeverSize = 0;
 // malloc() some memory that will never need to be resized or freed.
-void* mallocForever(U32 size) {
+void* mallocForever(U32 size)
+{
 	mallocForeverSize += size;
-log_f(3, "--- mallocForever: TotalSize %d\n", mallocForeverSize);
+	log_f(5, "--- mallocForever: TotalSize %d\n", mallocForeverSize);
 	return malloc(size);
 }
 

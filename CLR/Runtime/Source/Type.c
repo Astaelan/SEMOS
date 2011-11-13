@@ -403,14 +403,17 @@ static tTypeInit typeInit[] = {
 
 int CorLibDone = 0;
 
-void Type_Init() {
+void Type_Init()
+{
 	U32 i;
 
 	// Build all the types needed by the interpreter.
 	numInitTypes = sizeof(typeInit) / sizeof(typeInit[0]);
 	types = (tMD_TypeDef**)mallocForever(numInitTypes * sizeof(tMD_TypeDef*));
-	for (i=0; i<numInitTypes; i++) {
-		if (typeInit[i].assemblyName != NULL) {
+	for (i=0; i<numInitTypes; i++)
+	{
+		if (typeInit[i].assemblyName != NULL) 
+		{
 			// Normal type initialisation
 			types[i] = MetaData_GetTypeDefFromFullName(typeInit[i].assemblyName, typeInit[i].nameSpace, typeInit[i].name);
 			// For the pre-defined system types, fill in the well-known memory sizes
@@ -420,10 +423,14 @@ void Type_Init() {
 			types[i]->instanceMemSize = typeInit[i].instanceMemSize;
 		}
 	}
-	for (i=0; i<numInitTypes; i++) {
-		if (typeInit[i].assemblyName != NULL) {
+	for (i=0; i<numInitTypes; i++)
+	{
+		if (typeInit[i].assemblyName != NULL)
+		{
 			MetaData_Fill_TypeDef(types[i], NULL, NULL);
-		} else {
+		} 
+		else
+		{
 			// Special initialisation for arrays of particular types.
 			types[i] = Type_GetArrayTypeDef(types[(U32)(typeInit[i].name)], NULL, NULL);
 		}
@@ -431,7 +438,8 @@ void Type_Init() {
 	CorLibDone = 1;
 }
 
-U32 Type_IsMethod(tMD_MethodDef *pMethod, STRING name, tMD_TypeDef *pReturnType, U32 numParams, U8 *pParamTypeIndexs) {
+U32 Type_IsMethod(tMD_MethodDef *pMethod, STRING name, tMD_TypeDef *pReturnType, U32 numParams, U8 *pParamTypeIndexs)
+{
 	SIG sig;
 	U32 sigLen, numSigParams, i, nameLen;
 

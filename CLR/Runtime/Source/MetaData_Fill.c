@@ -26,7 +26,8 @@
 #include "Type.h"
 #include "EvalStack.h"
 
-void MetaData_Fill_FieldDef(tMD_TypeDef *pParentType, tMD_FieldDef *pFieldDef, U32 memOffset, tMD_TypeDef **ppClassTypeArgs) {
+void MetaData_Fill_FieldDef(tMD_TypeDef *pParentType, tMD_FieldDef *pFieldDef, U32 memOffset, tMD_TypeDef **ppClassTypeArgs) 
+{
 	U32 sigLength;
 	PTR sig;
 	tMetaData *pMetaData;
@@ -48,35 +49,43 @@ void MetaData_Fill_FieldDef(tMD_TypeDef *pParentType, tMD_FieldDef *pFieldDef, U
 	pFieldDef->pFieldDef = pFieldDef;
 
 	pMetaData = pFieldDef->pMetaData;
-	if (FIELD_HASFIELDRVA(pFieldDef)) {
+	if (FIELD_HASFIELDRVA(pFieldDef))
+	{
 		U32 i, top;
 
 		// Field has RVA, so load it from FieldRVA
 		top = pMetaData->tables.numRows[MD_TABLE_FIELDRVA];
-		for (i=1; i<=top; i++) {
+		for (i=1; i<=top; i++)
+		{
 			tMD_FieldRVA *pFieldRVA;
 
 			pFieldRVA = (tMD_FieldRVA*)MetaData_GetTableRow(pMetaData, MAKE_TABLE_INDEX(MD_TABLE_FIELDRVA, i));
-			if (pFieldRVA->field == pFieldDef->tableIndex) {
+			if (pFieldRVA->field == pFieldDef->tableIndex)
+			{
 				pFieldDef->pMemory = (PTR)pFieldRVA->rva;
 				break;
 			}
 		}
-	} else if (FIELD_ISLITERAL(pFieldDef)) {
+	} 
+	else if (FIELD_ISLITERAL(pFieldDef))
+	{
 		// Field is literal, so make pMemory point to the value signature
 		U32 i, top;
 
 		top = pMetaData->tables.numRows[MD_TABLE_CONSTANT];
-		for (i=1; i<=top; i++) {
+		for (i=1; i<=top; i++) 
+		{
 			tMD_Constant *pConst;
 			pConst = (tMD_Constant*)MetaData_GetTableRow(pMetaData, MAKE_TABLE_INDEX(MD_TABLE_CONSTANT, i));
-			if (pConst->parent == pFieldDef->tableIndex) {
+			if (pConst->parent == pFieldDef->tableIndex) 
+			{
 				// Found the field
 				pFieldDef->pMemory = (PTR)pConst;
 				break;
 			}
 		}
 	}
+	log_f(3, "Loaded FieldDef %s from Type %s.%s\n", pFieldDef->name, pParentType->nameSpace, pParentType->name);
 }
 
 void MetaData_Fill_MethodDef(tMD_TypeDef *pParentType, tMD_MethodDef *pMethodDef, tMD_TypeDef **ppClassTypeArgs, tMD_TypeDef **ppMethodTypeArgs) {
@@ -87,39 +96,47 @@ void MetaData_Fill_MethodDef(tMD_TypeDef *pParentType, tMD_MethodDef *pMethodDef
 	pMethodDef->pMethodDef = pMethodDef;
 	pMethodDef->isFilled = 1;
 
-	if (pMethodDef->isGenericDefinition) {
+	if (pMethodDef->isGenericDefinition) 
+	{
 		// Generic definition method, so can't do any more.
-		//log_f("Method<>: %s.%s.%s()\n", pParentType->nameSpace, pParentType->name, pMethodDef->name);
+		log_f(3, "Loaded Generic Method: %s.%s.%s()\n", pParentType->nameSpace, pParentType->name, pMethodDef->name);
 		return;
 	}
 
 	sig = MetaData_GetBlob(pMethodDef->signature, NULL);
 	entry = MetaData_DecodeSigEntry(&sig);
-	if (entry & SIG_METHODDEF_GENERIC) {
+	if (entry & SIG_METHODDEF_GENERIC) 
+	{
 		// Has generic parameters. Read how many, but don't care about the answer
 		MetaData_DecodeSigEntry(&sig);
 	}
 	pMethodDef->numberOfParameters = MetaData_DecodeSigEntry(&sig) + (METHOD_ISSTATIC(pMethodDef)?0:1);
 	pMethodDef->pReturnType = Type_GetTypeFromSig(pMethodDef->pMetaData, &sig, ppClassTypeArgs, ppMethodTypeArgs);
-	if (pMethodDef->pReturnType != NULL) {
+	if (pMethodDef->pReturnType != NULL)
+	{
 		MetaData_Fill_TypeDef(pMethodDef->pReturnType, NULL, NULL);
 	}
 	pMethodDef->pParams = (tParameter*)malloc(pMethodDef->numberOfParameters * sizeof(tParameter));
 	totalSize = 0;
-	if (!METHOD_ISSTATIC(pMethodDef)) {
+	if (!METHOD_ISSTATIC(pMethodDef))
+	{
 		// Fill in parameter info for the 'this' pointer
 		pMethodDef->pParams->offset = 0;
-		if (pParentType->isValueType) {
+		if (pParentType->isValueType) 
+		{
 			// If this is a value-type then the 'this' pointer is actually an IntPtr to the value-type's location
 			pMethodDef->pParams->size = 4;
 			pMethodDef->pParams->pTypeDef = types[TYPE_SYSTEM_INTPTR];
-		} else {
+		} 
+		else 
+		{
 			pMethodDef->pParams->size = 4;
 			pMethodDef->pParams->pTypeDef = pParentType;
 		}
 		totalSize = 4;
 	}
-	for (i=totalSize>>2; i<pMethodDef->numberOfParameters; i++) {
+	for (i=totalSize>>2; i<pMethodDef->numberOfParameters; i++)
+	{
 		tMD_TypeDef *pTypeDef;
 		U32 size;
 
@@ -137,26 +154,33 @@ void MetaData_Fill_MethodDef(tMD_TypeDef *pParentType, tMD_MethodDef *pMethodDef
 		totalSize += size;
 	}
 	pMethodDef->parameterStackSize = totalSize;
+
+	log_f(3, "Loaded Method %s.%s::%s \n", pParentType->nameSpace, pParentType->name, pMethodDef->name);
 }
 
 // Find the method that has been overridden by pMethodDef.
 // This is to get the correct vTable offset for the method.
 // This must search the MethodImpl table to see if the default inheritence rules are being overridden.
 // Return NULL if this method does not override anything.
-static tMD_MethodDef* FindVirtualOverriddenMethod(tMD_TypeDef *pTypeDef, tMD_MethodDef *pMethodDef) {
+static tMD_MethodDef* FindVirtualOverriddenMethod(tMD_TypeDef *pTypeDef, tMD_MethodDef *pMethodDef)
+{
 	U32 i;
 
-	do {
+	do 
+	{
 		// Search MethodImpl table
-		for (i=pTypeDef->pMetaData->tables.numRows[MD_TABLE_METHODIMPL]; i>0; i--) {
+		for (i=pTypeDef->pMetaData->tables.numRows[MD_TABLE_METHODIMPL]; i>0; i--) 
+		{
 			tMD_MethodImpl *pMethodImpl;
 
 			pMethodImpl = (tMD_MethodImpl*)MetaData_GetTableRow(pTypeDef->pMetaData, MAKE_TABLE_INDEX(MD_TABLE_METHODIMPL, i));
-			if (pMethodImpl->class_ == pTypeDef->tableIndex) {
+			if (pMethodImpl->class_ == pTypeDef->tableIndex)
+			{
 				tMD_MethodDef *pMethodDeclDef;
 
 				pMethodDeclDef = MetaData_GetMethodDefFromDefRefOrSpec(pTypeDef->pMetaData, pMethodImpl->methodDeclaration, pTypeDef->ppClassTypeArgs, pMethodDef->ppMethodTypeArgs);
-				if (pMethodDeclDef->tableIndex == pMethodDef->tableIndex) {
+				if (pMethodDeclDef->tableIndex == pMethodDef->tableIndex)
+				{
 					IDX_TABLE methodToken;
 					tMD_MethodDef *pMethod;
 
@@ -169,8 +193,10 @@ static tMD_MethodDef* FindVirtualOverriddenMethod(tMD_TypeDef *pTypeDef, tMD_Met
 
 		// Use normal inheritence rules
 		// It must be a virtual method that's being overridden.
-		for (i=pTypeDef->numVirtualMethods - 1; i != 0xffffffff; i--) {
-			if (MetaData_CompareNameAndSig(pMethodDef->name, pMethodDef->signature, pMethodDef->pMetaData, pMethodDef->pParentType->ppClassTypeArgs, pMethodDef->ppMethodTypeArgs, pTypeDef->pVTable[i], pTypeDef->ppClassTypeArgs, NULL)) {
+		for (i=pTypeDef->numVirtualMethods - 1; i != 0xffffffff; i--)
+		{
+			if (MetaData_CompareNameAndSig(pMethodDef->name, pMethodDef->signature, pMethodDef->pMetaData, pMethodDef->pParentType->ppClassTypeArgs, pMethodDef->ppMethodTypeArgs, pTypeDef->pVTable[i], pTypeDef->ppClassTypeArgs, NULL)) 
+			{
 				return pTypeDef->pVTable[i];
 			}
 		}
@@ -180,7 +206,8 @@ static tMD_MethodDef* FindVirtualOverriddenMethod(tMD_TypeDef *pTypeDef, tMD_Met
 	return NULL;
 }
 
-void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs, tMD_TypeDef **ppMethodTypeArgs) {
+void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs, tMD_TypeDef **ppMethodTypeArgs) 
+{
 	IDX_TABLE firstIdx, lastIdx, token;
 	U32 instanceMemSize, staticMemSize, virtualOfs, i, j;
 	tMetaData *pMetaData;
@@ -193,16 +220,20 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 	pTypeDef->pParent = MetaData_GetTypeDefFromDefRefOrSpec(pMetaData, pTypeDef->extends, ppClassTypeArgs, ppMethodTypeArgs);
 	pParent = pTypeDef->pParent;
 
-	if (pParent != NULL) {
+	if (pParent != NULL) 
+	{
 		MetaData_Fill_TypeDef(pParent, NULL, NULL);
 		virtualOfs = pParent->numVirtualMethods;
-	} else {
+	} 
+	else 
+	{
 		virtualOfs = 0;
 	}
 	pTypeDef->isValueType = (U8)Type_IsValueType(pTypeDef);
 
 	// If not primed, then work out how many methods & fields there are.
-	if (!pTypeDef->isPrimed) {
+	if (!pTypeDef->isPrimed)
+	{
 		// Methods
 		lastIdx = (pTypeDef->isLast)?
 			MAKE_TABLE_INDEX(MD_TABLE_METHODDEF, pTypeDef->pMetaData->tables.numRows[MD_TABLE_METHODDEF]):
@@ -223,8 +254,10 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 	lastIdx = firstIdx + pTypeDef->numMethods - 1;
 	// This only needs to be done for non-generic types, or for generic types that are not a definition
 	// I.e. Fully instantiated generic types
-	if (!pTypeDef->isGenericDefinition) {
-		for (token = firstIdx; token <= lastIdx; token++) {
+	if (!pTypeDef->isGenericDefinition) 
+	{
+		for (token = firstIdx; token <= lastIdx; token++)
+		{
 			tMD_MethodDef *pMethodDef;
 
 			pMethodDef = MetaData_GetMethodDefFromDefRefOrSpec(pMetaData, token, ppClassTypeArgs, ppMethodTypeArgs);
@@ -232,19 +265,25 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 			// This is needed, so array resolution can work correctly and FindVirtualOverriddenMethod() can work.
 			pMethodDef->pParentType = pTypeDef;
 
-			if (METHOD_ISVIRTUAL(pMethodDef)) {
-				if (METHOD_ISNEWSLOT(pMethodDef) || pTypeDef->pParent == NULL) {
+			if (METHOD_ISVIRTUAL(pMethodDef))
+			{
+				if (METHOD_ISNEWSLOT(pMethodDef) || pTypeDef->pParent == NULL) 
+				{
 					// Allocate a new vTable slot if method is explicitly marked as NewSlot, or
 					// this is of type Object.
 					pMethodDef->vTableOfs = virtualOfs++;
-				} else {
+				} 
+				else 
+				{
 					tMD_MethodDef *pVirtualOveriddenMethod;
 
 					pVirtualOveriddenMethod = FindVirtualOverriddenMethod(pTypeDef->pParent, pMethodDef);
 					Assert(pVirtualOveriddenMethod != NULL);
 					pMethodDef->vTableOfs = pVirtualOveriddenMethod->vTableOfs;
 				}
-			} else {
+			} 
+			else 
+			{
 				// Dummy value - make it obvious it's not valid!
 				pMethodDef->vTableOfs = 0xffffffff;
 			}
@@ -258,7 +297,8 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 
 		// It it's not a value-type and the stack-size is not preset, then set it up now.
 		// It needs to be done here as non-static fields in non-value types can point to the containing type
-		if (pTypeDef->stackSize == 0 && !pTypeDef->isValueType) {
+		if (pTypeDef->stackSize == 0 && !pTypeDef->isValueType)
+		{
 			pTypeDef->stackType = EVALSTACK_O;
 			pTypeDef->stackSize = sizeof(void*);
 		}
@@ -267,70 +307,86 @@ void MetaData_Fill_TypeDef_(tMD_TypeDef *pTypeDef, tMD_TypeDef **ppClassTypeArgs
 		firstIdx = pTypeDef->fieldList;
 		lastIdx = firstIdx + pTypeDef->numFields - 1;
 		staticMemSize = 0;
-		if (pTypeDef->numFields > 0) {
+		if (pTypeDef->numFields > 0) 
+		{
 			pTypeDef->ppFields = mallocForever(pTypeDef->numFields * sizeof(tMD_FieldDef*));
 		}
 		instanceMemSize = (pTypeDef->pParent == NULL)?0:pTypeDef->pParent->instanceMemSize;
-		for (token = firstIdx, i=0; token <= lastIdx; token++, i++) {
+		for (token = firstIdx, i=0; token <= lastIdx; token++, i++) 
+		{
 			tMD_FieldDef *pFieldDef;
 
 			pFieldDef = MetaData_GetFieldDefFromDefOrRef(pMetaData, token, ppClassTypeArgs, ppMethodTypeArgs);
-			if (!FIELD_ISSTATIC(pFieldDef)) {
+			if (!FIELD_ISSTATIC(pFieldDef))
+			{
 				// Only handle non-static fields at the moment
-				if (pTypeDef->pGenericDefinition != NULL) {
+				if (pTypeDef->pGenericDefinition != NULL)
+				{
 					// If this is a generic instantiation type, then all field defs need to be copied,
 					// as there will be lots of different instantiations.
 					tMD_FieldDef *pFieldCopy = TMALLOCFOREVER(tMD_FieldDef);
 					memcpy(pFieldCopy, pFieldDef, sizeof(tMD_FieldDef));
 					pFieldDef = pFieldCopy;
 				}
-				if (FIELD_ISLITERAL(pFieldDef) || FIELD_HASFIELDRVA(pFieldDef)) {
+				if (FIELD_ISLITERAL(pFieldDef) || FIELD_HASFIELDRVA(pFieldDef))
+				{
 					// If it's a literal, then analyse the field, but don't include it in any memory allocation
 					// If is has an RVA, then analyse the field, but don't include it in any memory allocation
 					MetaData_Fill_FieldDef(pTypeDef, pFieldDef, 0, ppClassTypeArgs);
-				} else {
+				}
+				else 
+				{
 					MetaData_Fill_FieldDef(pTypeDef, pFieldDef, instanceMemSize, ppClassTypeArgs);
 					instanceMemSize += pFieldDef->memSize;
 				}
 				pTypeDef->ppFields[i] = pFieldDef;
 			}
 		}
-		if (pTypeDef->instanceMemSize == 0) {
+		if (pTypeDef->instanceMemSize == 0)
+		{
 			pTypeDef->instanceMemSize = instanceMemSize;
 		}
 
 		// Sort out stack type and size.
 		// Note that this may already be set, as some basic types have this preset;
 		// or if it's not a value-type it'll already be set
-		if (pTypeDef->stackSize == 0) {
+		if (pTypeDef->stackSize == 0) 
+		{
 			// if it gets here then it must be a value type
 			pTypeDef->stackType = EVALSTACK_VALUETYPE;
 			pTypeDef->stackSize = pTypeDef->instanceMemSize;
 		}
 		// Sort out array element size. Note that some basic types will have this preset.
-		if (pTypeDef->arrayElementSize == 0) {
+		if (pTypeDef->arrayElementSize == 0) 
+		{
 			pTypeDef->arrayElementSize = pTypeDef->stackSize;
 		}
 
 		// Handle static fields
-		for (token = firstIdx, i=0; token <= lastIdx; token++, i++) {
+		for (token = firstIdx, i=0; token <= lastIdx; token++, i++)
+		{
 			tMD_FieldDef *pFieldDef;
 
 			pFieldDef = MetaData_GetFieldDefFromDefOrRef(pMetaData, token, ppClassTypeArgs, ppMethodTypeArgs);
-			if (FIELD_ISSTATIC(pFieldDef)) {
+			if (FIELD_ISSTATIC(pFieldDef))
+			{
 				// Only handle static fields here
-				if (pTypeDef->pGenericDefinition != NULL) {
+				if (pTypeDef->pGenericDefinition != NULL)
+				{
 					// If this is a generic instantiation type, then all field defs need to be copied,
 					// as there will be lots of different instantiations.
 					tMD_FieldDef *pFieldCopy = TMALLOCFOREVER(tMD_FieldDef);
 					memcpy(pFieldCopy, pFieldDef, sizeof(tMD_FieldDef));
 					pFieldDef = pFieldCopy;
 				}
-				if (FIELD_ISLITERAL(pFieldDef) || FIELD_HASFIELDRVA(pFieldDef)) {
+				if (FIELD_ISLITERAL(pFieldDef) || FIELD_HASFIELDRVA(pFieldDef))
+				{
 					// If it's a literal, then analyse the field, but don't include it in any memory allocation
 					// If is has an RVA, then analyse the field, but don't include it in any memory allocation
 					MetaData_Fill_FieldDef(pTypeDef, pFieldDef, 0, ppClassTypeArgs);
-				} else {
+				} 
+				else
+				{
 					MetaData_Fill_FieldDef(pTypeDef, pFieldDef, staticMemSize, ppClassTypeArgs);
 					staticMemSize += pFieldDef->memSize;
 				}

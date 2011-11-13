@@ -5,9 +5,13 @@
 /Tools
 /SEMOS.iso
 /SEMOS.sdf
+/SEMOS.opensdf
 /SEMOS.suo
 /Kernel/Object
+/Kernel/Kernel.log
+
 
 /CLR/corlib/bin
 /CLR/corlib/obj
 /CLR/Runtime/Object
+/CLR/Runtime/Runtime.log
