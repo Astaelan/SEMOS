@@ -13,9 +13,12 @@ OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o O
 	  Object\Hardware_GDT.o Object\Hardware_IDT.o Object\Hardware_PIC.o Object\Hardware_PIT.o Object\Hardware_RTC.o \
 	  Object\Hardware_SystemPartition.o Object\Hardware_VGAText.o
 
-build: $(OBJ)
-  $(RM) -f $(OUT)
+build:
+  $(MKDIR) -p Object
   $(MKDIR) -p ..\Build\boot\grub
+  $(MAKE) kernel
+
+kernel: $(OBJ)
   $(LD) -T Source\Kernel.ld -o $(OUT) Object\*.o $(LIB)
   copy /Y ..\Tools\grub\stage2_eltorito ..\Build\boot\grub
   copy /Y ..\Tools\grub\menu.lst ..\Build\boot\grub

@@ -66,8 +66,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <OutDir />
-    <IntDir />
+    <OutDir>..\Build\boot</OutDir>
+    <IntDir>Object\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
@@ -87,13 +87,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake /nologo build</NMakeBuildCommandLine>
-    <NMakeOutput>Kernel</NMakeOutput>
+    <NMakeOutput>semos.bin</NMakeOutput>
     <NMakeCleanCommandLine>nmake /nologo clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake /nologo rebuild</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\include</NMakeIncludeSearchPath>
-    <IncludePath />
+    <NMakeIncludeSearchPath>.\Include;..\Libs\Core\Include</NMakeIncludeSearchPath>
+    <IncludePath>..\Libs\Core\Include;$(IncludePath)</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <SourcePath />

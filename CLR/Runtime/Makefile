@@ -27,9 +27,13 @@ OBJ = Object\CLIFile.o Object\Delegate.o Object\DNA.o Object\Finalizer.o Object\
 	  Object\System.ValueType.o \
 	  Object\System.WeakReference.o
 
-build: $(OBJ)
+build:
+  $(MKDIR) -p Object
   $(MKDIR) -p ..\..\Libs\Runtime
   $(MKDIR) -p ..\..\Libs\Runtime\Include
+  $(MAKE) runtime
+
+runtime: $(OBJ)
   copy /Y Include ..\..\Libs\Runtime\Include
   $(AR) -rs ..\..\Libs\Runtime\Runtime.lib Object\*.o
 

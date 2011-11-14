@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>..\Tools\qemu\qemu.exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-L ..\Tools\qemu -cdrom semos.iso</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-L ..\Tools\qemu -cdrom ..\SEMOS.iso -serial vc -serial "file:..\Logs\ComPort2Out.txt"</LocalDebuggerCommandArguments>
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
