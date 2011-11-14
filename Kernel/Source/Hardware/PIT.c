@@ -28,8 +28,8 @@ static void PIT_InterruptHandler(Registers pRegisters)
     gPITTimerTicks++;
     if(gPITTimerTicks % 1000 == 0)
     {
-	    time_t t = time(NULL);
-        printf("PIT Tick: %d @ %s", gPITTimerTicks / 1000, ctime(&t));
+	    //time_t t = time(NULL);
+        //printf("PIT Tick: %d @ %s", gPITTimerTicks / 1000, ctime(&t));
     }
 }
 

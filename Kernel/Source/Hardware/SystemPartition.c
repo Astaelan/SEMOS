@@ -193,7 +193,7 @@ void SystemPartition_Cache(SystemPartitionCache * pCache)
 
         List_Add(&pCache->Entries, cache);
 
-        printf("%s, LBA = 0x%x, Length = 0x%x, Flags = 0x%x\n", cache->Identifier, cache->LBA, cache->Length, cache->Flags);
+        //printf("%s, LBA = 0x%x, Length = 0x%x, Flags = 0x%x\n", cache->Identifier, cache->LBA, cache->Length, cache->Flags);
 
         if (cache->Flags & 0x02) SystemPartition_Cache(cache);
 
@@ -274,7 +274,7 @@ off_t SystemPartition_LSeekHandler(FileDescriptor * pDescriptor, off_t pOffset, 
     if (tempOffset <= 0) pDescriptor->Offset = 0;
     else if ((UINT32)tempOffset >= pDescriptor->TotalSize) pDescriptor->Offset = pDescriptor->TotalSize;
     else pDescriptor->Offset = tempOffset;
-    printf("SystemPartition LSeekHandler: %i, %i = %u\n", (INT32)pOffset, pWhence, pDescriptor->Offset);
+    //printf("SystemPartition LSeekHandler: %i, %i = %u\n", (INT32)pOffset, pWhence, pDescriptor->Offset);
     return (off_t)pDescriptor->Offset;
 }
 
