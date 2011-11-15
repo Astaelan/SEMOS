@@ -223,6 +223,7 @@ INT32 SystemPartition_OpenHandler(FileDescriptor * pDescriptor, const char * pPa
         errno = EACCES;
         return -1;
     }
+    printf("Opening %s, %d bytes...\n", cache->Identifier, cache->Length);
     if (pFlags && pMode) { }
     pDescriptor->Active = TRUE;
     pDescriptor->BlockStart = cache->LBA;

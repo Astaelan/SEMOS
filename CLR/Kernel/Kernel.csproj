@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Kernel</RootNamespace>
     <AssemblyName>Kernel</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -45,6 +45,9 @@
       <Project>{6A77A7C0-FB66-4CAA-94EE-142DBA20655D}</Project>
       <Name>corlib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

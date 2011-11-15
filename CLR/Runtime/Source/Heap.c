@@ -118,7 +118,6 @@ void Heap_Init() {
 	nil->pLink[0] = nil->pLink[1] = nil;
 	// Set the heap tree as empty
 	pHeapTreeRoot = nil;
-    printf("HeapInit\n");
 }
 
 // Get the size of a heap entry, NOT including the header
@@ -139,7 +138,6 @@ static U32 GetSize(tHeapEntry *pHeapEntry) {
 }
 
 static tHeapEntry* TreeSkew(tHeapEntry *pRoot) {
-    printf("TreeSkew\n");
 	if (pRoot->pLink[0]->level == pRoot->level && pRoot->level != 0) {
 		tHeapEntry *pSave = pRoot->pLink[0];
 		pRoot->pLink[0] = pSave->pLink[1];
@@ -150,7 +148,6 @@ static tHeapEntry* TreeSkew(tHeapEntry *pRoot) {
 }
 
 static tHeapEntry* TreeSplit(tHeapEntry *pRoot) {
-    printf("TreeSplit\n");
 	if (pRoot->pLink[1]->pLink[1]->level == pRoot->level && pRoot->level != 0) {
 		tHeapEntry *pSave = pRoot->pLink[1];
 		pRoot->pLink[1] = pSave->pLink[0];
@@ -162,7 +159,6 @@ static tHeapEntry* TreeSplit(tHeapEntry *pRoot) {
 }
 
 static tHeapEntry* TreeInsert(tHeapEntry *pRoot, tHeapEntry *pEntry) {
-    printf("TreeInsert\n");
 	if (pRoot == nil) {
 		pRoot = pEntry;
 		pRoot->level = 1;
@@ -204,7 +200,6 @@ static tHeapEntry* TreeInsert(tHeapEntry *pRoot, tHeapEntry *pEntry) {
 }
 
 static tHeapEntry* TreeRemove(tHeapEntry *pRoot, tHeapEntry *pDelete) {
-    printf("TreeRemove\n");
 	if (pRoot != nil) {
 		if (pRoot == pDelete) {
 			if (pRoot->pLink[0] != nil && pRoot->pLink[1] != nil) {
@@ -477,7 +472,6 @@ HEAP_PTR Heap_Alloc(tMD_TypeDef *pTypeDef, U32 size) {
 	memset(pHeapEntry->memory, 0, size);
 	trackHeapSize += totalSize;
 
-    printf("HeapTreeRoot = 0x%x, HeapEntry = 0x%x\n", (unsigned int)pHeapTreeRoot, (unsigned int)pHeapEntry);
 	pHeapTreeRoot = TreeInsert(pHeapTreeRoot, pHeapEntry);
 	numNodes++;
 

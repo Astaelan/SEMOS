@@ -303,7 +303,6 @@ I32 CLIFile_Execute(tCLIFile *pThis, int argc, char **argp)
 		HEAP_PTR arg = SystemString_FromCharPtrASCII(argp[i]);
 		SystemArray_StoreElement(args, i, (PTR)&arg);
 	}
-
 	// Create the main application thread
 	pThread = Thread();
 	Thread_SetEntryPoint(pThread, pThis->pMetaData, pThis->entryPoint, (PTR)&args, sizeof(void*));

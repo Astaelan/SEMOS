@@ -7,7 +7,7 @@ MKDIR = ..\Tools\bin\mkdir
 OUT = ..\Build\boot\semos.bin
 GCCARGS = -I..\Libs\Core\Include -I ..\Libs\Runtime\Include -I.\Include -std=c99 -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
 LIB = ..\Libs\Runtime\Runtime.lib ..\Libs\Core\LibGcc.lib ..\Libs\Core\LibC.lib ..\Libs\Core\LibM.lib
-OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o Object\Kernel.o Object\SystemCalls.o Object\FileSystem.o \
+OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o Object\DLMalloc.o Object\Kernel.o Object\SystemCalls.o Object\FileSystem.o \
 	  Object\Utility_COMPortLogger.o Object\Utility_List.o \
 	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \
 	  Object\Hardware_GDT.o Object\Hardware_IDT.o Object\Hardware_PIC.o Object\Hardware_PIT.o Object\Hardware_RTC.o \
@@ -42,6 +42,9 @@ Object\GDT.o: Source\GDT.asm
   $(AS) -o $@ $?
 
 Object\MBoot.o: Source\MBoot.c
+  $(GCC) $(GCCARGS) $@ -c $?
+
+Object\DLMalloc.o: Source\DLMalloc.c
   $(GCC) $(GCCARGS) $@ -c $?
 
 Object\Kernel.o: Source\Kernel.c

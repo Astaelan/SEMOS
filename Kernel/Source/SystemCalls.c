@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <types.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <glob.h>
@@ -31,6 +32,8 @@ PVOID sbrk(ptrdiff_t pAdjustment)
 {
 	static BYTE mmapActiveIndex;
 	MBootMMapAvailable * mmapActive = gMBootMMapAvailable + mmapActiveIndex;
+
+    //printf("sbrk(%d)\n", (int)pAdjustment);
 	if (pAdjustment >= 0)
 	{
 		BYTE originalIndex = mmapActiveIndex;
@@ -49,8 +52,34 @@ PVOID sbrk(ptrdiff_t pAdjustment)
 	}
 	mmapActive->Used += pAdjustment;
 	if (mmapActive->Used == 0 && mmapActiveIndex > 0) --mmapActiveIndex;
+
     return NULL;
 }
+
+_PTR _malloc_r (struct _reent *r, size_t sz)
+{
+    if (r) { }
+    return malloc (sz);
+}
+
+_PTR _calloc_r (struct _reent *r, size_t a, size_t b)
+{
+    if (r) { }
+    return calloc (a, b);
+}
+
+void _free_r (struct _reent *r, _PTR x)
+{
+    if (r) { }
+    free (x);
+}
+
+_PTR _realloc_r (struct _reent *r, _PTR x, size_t sz)
+{
+    if (r) { }
+    return realloc (x, sz);
+}
+
 
 INT32 gettimeofday(struct timeval * tv,
                    PVOID tz)
@@ -79,7 +108,6 @@ INT32 open(const char * pathname, int flags, mode_t mode)
         pathname = pathBuffer;
     }
     BYTE fd = 0;
-    printf("Opening %s...\n", pathname);
     for (UINT32 index = FILESYSTEM_FILEDESCRIPTOR_RESERVED; index < FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT; ++index)
     {
         if (!gFileSystemFileDescriptors[index].Active)
@@ -250,9 +278,16 @@ char * getcwd(char * buf, size_t size)
     return buf;
 }
 
-void exit()
+void exit(int status)
 {
-    printf("EXIT!\n");
+    if (status) { }
+    while (TRUE);
+}
+
+void _exit(int status)
+{
+    if (status) { }
+    while (TRUE);
 }
 
 int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int eerrno), glob_t * pglob)
@@ -262,8 +297,28 @@ int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int
     return GLOB_NOSPACE;
 }
 
-void	globfree(glob_t * pglob)
+void globfree(glob_t * pglob)
 {
     printf("GLOBFREE!\n");
     if (pglob) { }
+}
+
+int getpid()
+{
+    return 1;
+}
+
+int kill(int pid,
+         int sig)
+{
+  if (pid && sig) { }
+  errno = EINVAL;
+  return -1;
+}
+
+long sysconf(int name)
+{
+    if (name == _SC_PAGE_SIZE) return 1;
+    errno = EINVAL;
+    return -1;
 }

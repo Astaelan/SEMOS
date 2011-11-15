@@ -22,6 +22,7 @@
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DLMalloc.c" />
     <ClCompile Include="Source\FileSystem.c" />
     <ClCompile Include="Source\Hardware\ATA\ATADevice.c" />
     <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c" />

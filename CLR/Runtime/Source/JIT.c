@@ -119,7 +119,7 @@ static void PushStackType_(tTypeStack *pTypeStack, tMD_TypeDef *pType) {
 	if (size > pTypeStack->maxBytes) {
 		pTypeStack->maxBytes = size;
 	}
-	//printf("Stack ofs = %d; Max stack size: %d (0x%x)\n", pTypeStack->ofs, size, size);
+	printf("Stack ofs = %d; Max stack size: %d (0x%x)\n", pTypeStack->ofs, size, size);
 }
 
 static void PushU32_(tOps *pOps, U32 v) {
@@ -604,6 +604,7 @@ cilCallVirtConstrained:
 					// Pop stack type for each argument. Don't actually care what these are,
 					// except the last one which will be the 'this' object type of a non-static method
 					//printf("Call %s() - popping %d stack args\n", pCallMethod->name, pCallMethod->numberOfParameters);
+                    printf("Got here %s, %u!\n", pCallMethod->name, pCallMethod->numberOfParameters);
 					for (i=0; i<pCallMethod->numberOfParameters; i++) {
 						pStackType = PopStackType();
 					}
