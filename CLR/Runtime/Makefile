@@ -16,8 +16,8 @@ OBJ = Object\CLIFile.o Object\Delegate.o Object\DNA.o Object\Finalizer.o Object\
 	  Object\System.GC.o \
 	  Object\System.IO.FileInternal.o \
 	  Object\System.Math.o \
-#	  Object\System.Net.Dns.o \
-#	  Object\System.Net.Sockets.Socket.o \
+	  Object\System.Net.Dns.o \
+	  Object\System.Net.Sockets.Socket.o \
 	  Object\System.Object.o \
 	  Object\System.Runtime.CompilerServices.RuntimeHelpers.o \
 	  Object\System.RuntimeType.o \

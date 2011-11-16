@@ -28,10 +28,11 @@
 #include "System.String.h"
 
 #ifndef WIN32
-#include <netdb.h>
+//#include <netdb.h>
 #endif
 
 tAsyncCall* System_Net_Dns_Internal_GetHostEnt(PTR pThis_, PTR pParams, PTR pReturnValue) {
+/*
 	struct hostent *pHostEnt;
 	U32 i, len;
 	STRING2 name2;
@@ -57,7 +58,7 @@ tAsyncCall* System_Net_Dns_Internal_GetHostEnt(PTR pThis_, PTR pParams, PTR pRet
 	for (i=0; pHostEnt->h_addr_list[i] != NULL; i++) {
 		SystemArray_StoreElement(retArray, i, pHostEnt->h_addr_list[i]);
 	}
-
+*/
 	return NULL;
 
 }

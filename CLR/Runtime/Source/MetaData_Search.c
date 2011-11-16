@@ -305,7 +305,7 @@ tMD_MethodDef* MetaData_GetMethodDefFromDefRefOrSpec(tMetaData *pMetaData, IDX_T
 						tMD_TypeDef *pTypeDef;
 						tMD_MethodDef *pMethodDef;
 
-						pTypeDef = MetaData_GetTypeDefFromDefRefOrSpec(pMetaData, pMemberRef->class_, ppClassTypeArgs, ppMethodTypeArgs);
+                        pTypeDef = MetaData_GetTypeDefFromDefRefOrSpec(pMetaData, pMemberRef->class_, ppClassTypeArgs, ppMethodTypeArgs);
 						MetaData_Fill_TypeDef(pTypeDef, NULL, NULL);
 						pMethodDef = FindMethodInType(pTypeDef, pMemberRef->name, pMetaData, pMemberRef->signature, pTypeDef->ppClassTypeArgs, ppMethodTypeArgs);
 						//pMethodDef->pMethodDef = pMethodDef;

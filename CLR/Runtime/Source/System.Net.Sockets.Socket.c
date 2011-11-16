@@ -30,8 +30,8 @@
 #define WOULDBLOCK WSAEWOULDBLOCK
 #else
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+//#include <sys/socket.h>
+//#include <netinet/in.h>
 #include <errno.h>
 #define ERRNO errno
 #define WOULDBLOCK EWOULDBLOCK
@@ -45,7 +45,7 @@ void Socket_Init() {
 }
 
 tAsyncCall* System_Net_Sockets_Internal_CreateSocket(PTR pThis_, PTR pParams, PTR pReturnValue) {
-
+/*
 	int s;
 
 	U32 family = INTERNALCALL_PARAM(0, U32);
@@ -76,12 +76,12 @@ tAsyncCall* System_Net_Sockets_Internal_CreateSocket(PTR pThis_, PTR pParams, PT
 #endif
 
 	*(int*)pReturnValue = s;
-
+*/
 	return NULL;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Bind(PTR pThis_, PTR pParams, PTR pReturnValue) {
-
+/*
 	struct sockaddr_in sa;
 	int r;
 
@@ -100,12 +100,12 @@ tAsyncCall* System_Net_Sockets_Internal_Bind(PTR pThis_, PTR pParams, PTR pRetur
 
 	r = bind(s, (struct sockaddr*)&sa, sizeof(sa));
 	*pError = (r != 0)?ERRNO:0;
-
+*/
 	return NULL;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Close(PTR pThis_, PTR pParams, PTR pReturnValue) {
-
+/*
 	int s = INTERNALCALL_PARAM(0, int);
 
 #ifdef WIN32
@@ -113,24 +113,26 @@ tAsyncCall* System_Net_Sockets_Internal_Close(PTR pThis_, PTR pParams, PTR pRetu
 #else
 	close(s);
 #endif
-
+*/
 	return NULL;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Listen(PTR pThis_, PTR pParams, PTR pReturnValue) {
-	int s = INTERNALCALL_PARAM(0, int);
+/*
+    int s = INTERNALCALL_PARAM(0, int);
 	U32 backlog = INTERNALCALL_PARAM(4, U32);
 	U32 *pError = INTERNALCALL_PARAM(8, U32*);
 
 	int r = listen(s, backlog);
 
 	*pError = (r != 0)?ERRNO:0;
-
+*/
 	return NULL;
 }
 
 static U32 Accept_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *pAsync) {
-	int s = INTERNALCALL_PARAM(0, int);
+/*
+    int s = INTERNALCALL_PARAM(0, int);
 	U32 *pError = INTERNALCALL_PARAM(4, U32*);
 	int newS;
 
@@ -150,9 +152,12 @@ static U32 Accept_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *p
 		*pError = 0;
 		return 1;
 	}
+*/
+    return 0;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Accept(PTR pThis_, PTR pParams, PTR pReturnValue) {
+/*
 	U32 ret = Accept_Check(pThis_, pParams, pReturnValue, NULL);
 	if (ret) {
 		return NULL;
@@ -163,10 +168,13 @@ tAsyncCall* System_Net_Sockets_Internal_Accept(PTR pThis_, PTR pParams, PTR pRet
 		pAsync->state = NULL;
 		return pAsync;
 	}
+*/
+    return NULL;
 }
 
 static U32 Connect_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *pAsync) {
-	struct sockaddr_in sa;
+/*
+    struct sockaddr_in sa;
 	int r;
 
 	int s = INTERNALCALL_PARAM(0, int);
@@ -211,9 +219,12 @@ static U32 Connect_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *
 			return 1;
 		}
 	}
+*/
+    return 1;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Connect(PTR pThis_, PTR pParams, PTR pReturnValue) {
+/*
 	U32 ret = Connect_Check(pThis_, pParams, pReturnValue, NULL);
 	if (ret) {
 		return NULL;
@@ -224,6 +235,8 @@ tAsyncCall* System_Net_Sockets_Internal_Connect(PTR pThis_, PTR pParams, PTR pRe
 		pAsync->state = NULL;
 		return pAsync;
 	}
+*/
+    return NULL;
 }
 
 typedef struct tSendRecvState_ tSendRecvState;
@@ -233,6 +246,7 @@ struct tSendRecvState_ {
 };
 
 static U32 Receive_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *pAsync) {
+/*
 	PTR buffer;
 	int r;
 	tSendRecvState *pState = (tSendRecvState*)pAsync->state;
@@ -280,9 +294,12 @@ static U32 Receive_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *
 			return 1;
 		}
 	}
+*/
+    return 1;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Receive(PTR pThis_, PTR pParams, PTR pReturnValue) {
+/*
 	U32 ok;
 	tAsyncCall *pAsync = TMALLOC(tAsyncCall);
 	tSendRecvState *pState = TMALLOC(tSendRecvState);
@@ -298,9 +315,12 @@ tAsyncCall* System_Net_Sockets_Internal_Receive(PTR pThis_, PTR pParams, PTR pRe
 	} else {
 		return pAsync;
 	}
+*/
+    return NULL;
 }
 
 static U32 Send_Check(PTR pThis_, PTR pParams, PTR pReturnValue, tAsyncCall *pAsync) {
+/*
 	PTR buffer;
 	int r;
 	tSendRecvState *pState = (tSendRecvState*)pAsync->state;
@@ -343,9 +363,12 @@ printf("Send_Check: errno=%d\n", err);
 			return 1;
 		}
 	}
+*/
+    return 1;
 }
 
 tAsyncCall* System_Net_Sockets_Internal_Send(PTR pThis_, PTR pParams, PTR pReturnValue) {
+/*
 	U32 ok;
 	tAsyncCall *pAsync = TMALLOC(tAsyncCall);
 	tSendRecvState *pState = TMALLOC(tSendRecvState);
@@ -361,4 +384,6 @@ tAsyncCall* System_Net_Sockets_Internal_Send(PTR pThis_, PTR pParams, PTR pRetur
 	} else {
 		return pAsync;
 	}
+*/
+    return NULL;
 }

@@ -157,7 +157,7 @@ static tInternalCall internalCalls[] = {
 	{"System.Runtime.CompilerServices", "RuntimeHelpers", "InitializeArray", System_Runtime_CompilerServices_InitializeArray, TYPE_SYSTEM_VOID, 2, {TYPE_SYSTEM_ARRAY_NO_TYPE, TYPE_SYSTEM_RUNTIMEFIELDHANDLE}},
 
 	{"System.Diagnostics", "Debugger", "Break", System_Diagnostics_Debugger_Break, TYPE_SYSTEM_VOID, 0},
-    /*
+
 	{"System.Net", "Dns", "Internal_GetHostEnt", System_Net_Dns_Internal_GetHostEnt, TYPE_SYSTEM_ARRAY_INT32, 2, {TYPE_SYSTEM_STRING, TYPE_SYSTEM_INTPTR}},
 
 	{"System.Net.Sockets", "Socket", "Internal_CreateSocket", System_Net_Sockets_Internal_CreateSocket, TYPE_SYSTEM_INTPTR, 4, {TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}}, 
@@ -168,7 +168,7 @@ static tInternalCall internalCalls[] = {
 	{NULL,                 NULL,     "Internal_Connect", System_Net_Sockets_Internal_Connect, TYPE_SYSTEM_VOID, 4, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_UINT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}},
 	{NULL,                 NULL,     "Internal_Receive", System_Net_Sockets_Internal_Receive, TYPE_SYSTEM_INT32, 6, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_ARRAY_BYTE, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}},
 	{NULL,                 NULL,     "Internal_Send", System_Net_Sockets_Internal_Send, TYPE_SYSTEM_INT32, 6, {TYPE_SYSTEM_INTPTR, TYPE_SYSTEM_ARRAY_BYTE, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INT32, TYPE_SYSTEM_INTPTR}},
-    */
+
 	{NULL, NULL, NULL, NULL}
 };
 
