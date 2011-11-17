@@ -1,4 +1,5 @@
 #include <Kernel.h>
+#include <vector>
 
 extern "C" {
 void Kernel(UINT32 pMBootMagic, PVOID pMBoot);
@@ -23,6 +24,9 @@ void Kernel(UINT32 pMBootMagic,
 	PIT_Initialize(1000);
 	RTC_Initialize();
 
+    std::vector<int> vector;
+    vector.push_back(123);
+    
 	time_t startupTime = time(NULL);
 	printf("Startup @ %s\n", ctime(&startupTime));
 

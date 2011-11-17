@@ -22,6 +22,7 @@ extern int  errno;
 int strncasecmp(const char *, const char *, size_t);
 
 extern "C" {
+void *__dso_handle = NULL;
 int kill(int pid, int sig);
 }
 
