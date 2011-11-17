@@ -1,8 +1,10 @@
 #ifndef _FILESYSTEM_H
 #define _FILESYSTEM_H
 
+extern "C" {
 #include <types.h>
 #include <sys/stat.h>
+}
 #include <Utility/List.h>
 
 #define FILESYSTEM_MAX_FILEDESCRIPTOR_COUNT     256
@@ -18,7 +20,7 @@ typedef INT32 (*FileSystemReadHandler)(struct FileDescriptor * pDescriptor, void
 
 typedef struct FileSystem
 {
-    PCHAR Root;
+    char * Root;
     FileSystemOpenHandler OpenHandler;
 } FileSystem;
 
@@ -34,7 +36,7 @@ typedef struct FileDescriptor
     UINT32 BlockCount;
     BOOL TerminalStream;
     UINT32 Offset;
-    PCHAR Path;
+    char * Path;
     FileSystemCloseHandler CloseHandler;
     FileSystemLSeekHandler LSeekHandler;
     FileSystemWriteHandler WriteHandler;

@@ -1,23 +1,16 @@
 #include <Kernel.h>
 
-#include "Compat.h"
-#include "Sys.h"
-
-#include "CLIFile.h"
-#include "MetaData.h"
-#include "Type.h"
-#include "Heap.h"
-#include "Finalizer.h"
-#include "System.Net.Sockets.Socket.h"
-#include "MethodState.h"
+extern "C" {
+void Kernel(UINT32 pMBootMagic, PVOID pMBoot);
+}
 
 void Kernel(UINT32 pMBootMagic,
             PVOID pMBoot)
 {
-	COMPortLogger_Initialize();
-	COMPortLogger_WriteLine("See? It works!");
+	SEMOS::Utility::COMPortLogger::Initialize();
+	SEMOS::Utility::COMPortLogger::WriteLine("See? It works!");
 
-	VGAText_Clear(VGATEXT_ATTRIBUTES(VGATEXT_ATTRIBUTE_LIGHT_WHITE, VGATEXT_ATTRIBUTE_DARK_BLACK));
+	SEMOS::Hardware::VGAText::Clear(SEMOS::Hardware::VGAText::CreateAttributes(SEMOS::Hardware::VGAText::LightWhite, SEMOS::Hardware::VGAText::DarkBlack));
 	if (!MBoot_Initialize(pMBootMagic, pMBoot)) Panic("PANIC: Bootloader did not pass valid multiboot data");
 
     FileSystem_Initialize();
@@ -34,25 +27,4 @@ void Kernel(UINT32 pMBootMagic,
 	printf("Startup @ %s\n", ctime(&startupTime));
 
 	SystemPartition_Initialize();
-
-    printf("CLR Runtime Initializing\n");
-	logLevel = 0;
-
-    JIT_Execute_Init();
-    printf("CLR JIT Initialized\n");
-	MetaData_Init();
-    printf("CLR MetaData Initialized\n");
-	Type_Init();
-    printf("CLR Types Initialized\n");
-	Heap_Init();
-    printf("CLR Heap Initialized\n");
-	Finalizer_Init();
-    printf("CLR Finalizer Initialized\n");
-
-	tCLIFile *cliFile = CLIFile_Load("/SYSTEM/KERNEL.EXE");
-    if (cliFile) printf("Loaded Kernel.exe\n");
-	INT32 retValue = CLIFile_Execute(cliFile, 0, NULL);
-    printf("Executed Kernel.exe: %d\n", retValue);
-    if (retValue) { }
-    while (TRUE);
 }

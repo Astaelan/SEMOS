@@ -1,7 +1,9 @@
 #ifndef _PIC_H
 #define _PIC_H
 
+extern "C" {
 #include <types.h>
+}
 
 #define PIC_IO_MASTER_BASE          0x20
 #define PIC_IO_SLAVE_BASE           0xA0

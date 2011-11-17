@@ -1,4 +1,6 @@
+extern "C" {
 #include <types.h>
+}
 #include <PortIO.h>
 #include <Hardware/IDT.h>
 #include <Hardware/PIC.h>
@@ -41,8 +43,12 @@ IDTHandler gIDTHandlers[IDTDESCRIPTOR_COUNT];
 
 void IDT_SetGate(BYTE pIndex, UINT32 pBaseAddress, UINT16 pSelector, BYTE pTypeAndFlags);
 
+extern "C" {
 extern void IDT_Update(IDTRegister* pRegister);
 #include <Hardware/IDTExternalStubs.h> // Must remain here
+void IDT_ISR_Handler(Registers pRegisters);
+void IDT_IRQ_Handler(Registers pRegisters);
+}
 
 void IDT_InitGate(BYTE pIndex,
                   UINT32 pBaseAddress)

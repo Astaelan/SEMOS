@@ -1,4 +1,6 @@
+extern "C" {
 #include <stdlib.h>
+}
 #include <Utility/List.h>
 
 Node * List_Find(List * pList,

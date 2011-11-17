@@ -32,8 +32,8 @@ BOOL MBoot_Initialize(UINT32 pMBootMagic,
 	if (pMBootMagic != MBOOT_MAGIC) return FALSE;
 	gMBoot = (MBoot *)pMBoot;
 
-    extern CHAR __BOF;
-    extern CHAR __EOF;
+    extern char __BOF;
+    extern char __EOF;
 	UINT32 kernelHead = (UINT32)&__BOF;
 	UINT32 kernelTail = (UINT32)&__EOF;
 	UINT32 kernelSize = kernelTail - kernelHead;

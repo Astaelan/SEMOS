@@ -1,7 +1,9 @@
 #ifndef _IDT_H
 #define _IDT_H
 
+extern "C" {
 #include <types.h>
+}
 
 typedef struct
 {

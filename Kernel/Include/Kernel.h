@@ -1,10 +1,14 @@
 #ifndef _KERNEL
 #define _KERNEL
 
+extern "C" {
 #include <types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+}
+
+#include <iostream>
 
 #include <MBoot.h>
 #include <FileSystem.h>
@@ -20,6 +24,6 @@
 // SystemCalls
 
 void Halt();
-void Panic(const PSTRING pMessage);
+void Panic(const char * pMessage);
 
 #endif
