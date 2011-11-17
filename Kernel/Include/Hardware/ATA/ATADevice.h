@@ -1,7 +1,9 @@
 #ifndef _ATADEVICE_H
 #define _ATADEVICE_H
 
+extern "C" {
 #include <types.h>
+}
 
 #define ATADEVICE_IO_PRIMARY_BASE           0x01F0
 #define ATADEVICE_IO_SECONDARY_BASE         0x0170
@@ -44,6 +46,6 @@ typedef struct
 ATADevice * ATADevice_Initialize(UINT16 pBaseRegister, UINT16 pControlRegister, BYTE pInterrupt, BOOL pSlave);
 void ATADevice_Reset(ATADevice * pDevice);
 void ATADevice_SelectDrive(ATADevice * pDevice);
-PSTRING ATADevice_GetTypeName(ATADevice * pDevice);
+const char * ATADevice_GetTypeName(ATADevice * pDevice);
 
 #endif

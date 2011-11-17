@@ -1,3 +1,5 @@
+extern "C" {
+#include <signal.h>
 #include <errno.h>
 #include <types.h>
 #include <unistd.h>
@@ -7,6 +9,8 @@
 #include <glob.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+}
+
 #include <MBoot.h>
 #include <FileSystem.h>
 #include <Hardware/RTC.h>
@@ -17,9 +21,13 @@ extern int  errno;
 
 int strncasecmp(const char *, const char *, size_t);
 
+extern "C" {
+int kill(int pid, int sig);
+}
+
 void Halt() { __asm("hlt"); }
 
-void Panic(const PSTRING pMessage)
+void Panic(const char * pMessage)
 {
     __asm("cli");
 	VGAText_Clear(VGATEXT_ATTRIBUTES(VGATEXT_ATTRIBUTE_DARK_BLACK, VGATEXT_ATTRIBUTE_LIGHT_RED));
@@ -100,7 +108,7 @@ INT32 gettimeofday(struct timeval * tv,
 
 INT32 open(const char * pathname, int flags, mode_t mode)
 {
-    CHAR pathBuffer[256];
+    char pathBuffer[256];
     if (pathname[0] != '/')
     {
         strcpy(pathBuffer, "/SYSTEM/");

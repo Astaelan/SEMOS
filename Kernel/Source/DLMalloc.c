@@ -576,7 +576,9 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #endif  /* DARWIN */
 
 #ifndef LACKS_SYS_TYPES_H
+extern "C" {
 #include <sys/types.h>  /* For size_t */
+}
 #endif  /* LACKS_SYS_TYPES_H */
 
 /* The maximum possible size_t value has all bits set */
@@ -1431,10 +1433,14 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #pragma warning( disable : 4146 ) /* no "unsigned" warnings */
 #endif /* _MSC_VER */
 #if !NO_MALLOC_STATS
+extern "C" {
 #include <stdio.h>       /* for printing in malloc_stats */
+}
 #endif /* NO_MALLOC_STATS */
 #ifndef LACKS_ERRNO_H
+extern "C" {
 #include <errno.h>       /* for MALLOC_FAILURE_ACTION */
+}
 #endif /* LACKS_ERRNO_H */
 #ifdef DEBUG
 #if ABORT_ON_ASSERT_FAILURE
@@ -1450,13 +1456,19 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #define DEBUG 0
 #endif /* DEBUG */
 #if !defined(WIN32) && !defined(LACKS_TIME_H)
+extern "C" {
 #include <time.h>        /* for magic initialization */
+}
 #endif /* WIN32 */
 #ifndef LACKS_STDLIB_H
+extern "C" {
 #include <stdlib.h>      /* for abort() */
+}
 #endif /* LACKS_STDLIB_H */
 #ifndef LACKS_STRING_H
+extern "C" {
 #include <string.h>      /* for memset etc */
+}
 #endif  /* LACKS_STRING_H */
 #if USE_BUILTIN_FFS
 #ifndef LACKS_STRINGS_H
@@ -1479,7 +1491,9 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #endif /* LACKS_FCNTL_H */
 #endif /* HAVE_MMAP */
 #ifndef LACKS_UNISTD_H
+extern "C" {
 #include <unistd.h>     /* for sbrk, sysconf */
+}
 #else /* LACKS_UNISTD_H */
 #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
 extern void*     sbrk(ptrdiff_t);

@@ -39,7 +39,7 @@ void COMPortLogger_WriteData(BYTE b)
 	outb(COMPORTLOGGER_IO_DATA, b);
 }
 
-void COMPortLogger_WriteLine(const PSTRING pString)
+void COMPortLogger_WriteLine(const char * pString)
 {
 	COMPortLogger_WriteString(pString);
 	// Now write the end line.
@@ -47,9 +47,9 @@ void COMPortLogger_WriteLine(const PSTRING pString)
 	COMPortLogger_WriteData((BYTE)'\n');
 }
 
-void COMPortLogger_WriteString(const PSTRING pString)
+void COMPortLogger_WriteString(const char * pString)
 {
-	PSTRING iterator = pString;
+	const char * iterator = pString;
 	while (*iterator) 
 	{
 		COMPortLogger_WriteData(*iterator);

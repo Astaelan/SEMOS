@@ -1,12 +1,12 @@
-GCC = ..\Tools\bin\i686-elf-gcc
+GCC = ..\Tools\bin\i686-elf-g++
 AS  = ..\Tools\bin\i686-elf-as
 LD  = ..\Tools\bin\i686-elf-ld
 RM  = ..\Tools\bin\rm
 MKISOFS  = ..\Tools\bin\mkisofs
 MKDIR = ..\Tools\bin\mkdir
 OUT = ..\Build\boot\semos.bin
-GCCARGS = -I..\Libs\Core\Include -I ..\Libs\Runtime\Include -I.\Include -std=c99 -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
-LIB = ..\Libs\Runtime\Runtime.lib ..\Libs\Core\LibGcc.lib ..\Libs\Core\LibC.lib ..\Libs\Core\LibM.lib
+GCCARGS = -I..\Libs\Core\Include -I.\Include -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
+LIB = ..\Libs\Core\LibC.lib ..\Libs\Core\LibM.lib ..\Libs\Core\LibGcc.lib 
 OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o Object\DLMalloc.o Object\Kernel.o Object\SystemCalls.o Object\FileSystem.o \
 	  Object\Utility_COMPortLogger.o Object\Utility_List.o \
 	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \

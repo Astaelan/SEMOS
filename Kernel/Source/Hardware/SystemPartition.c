@@ -1,7 +1,9 @@
+extern "C" {
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+}
 #include <PortIO.h>
 #include <FileSystem.h>
 #include <Hardware/SystemPartition.h>
@@ -23,7 +25,7 @@ typedef struct
     UINT32 LBA;
     UINT32 Length;
     BYTE Flags;
-    PSTRING Identifier;
+    char * Identifier;
     List Entries;
 } SystemPartitionCache;
 
@@ -48,7 +50,7 @@ void SystemPartition_Initialize()
 {
     if(!SystemPartition_Detect()) return;
 
-    PSTRING rootMount = "/SYSTEM";
+    const char * rootMount = "/SYSTEM";
     UINT32 rootMountLength = strlen(rootMount);
 
     PBYTE sectorBuffer = (PBYTE)malloc(ATAPIDEVICE_IO_SECTOR_SIZE);
@@ -58,7 +60,7 @@ void SystemPartition_Initialize()
     gSystemPartitionCache.LBA = *(UINT32 *)(sectorBuffer + 156 + 2);
     gSystemPartitionCache.Length = *(UINT32 *)(sectorBuffer + 156 + 10);
     gSystemPartitionCache.Flags = *(sectorBuffer + 156 + 25);
-    gSystemPartitionCache.Identifier = (PSTRING)malloc(rootMountLength + 1);
+    gSystemPartitionCache.Identifier = (char *)malloc(rootMountLength + 1);
     strncpy(gSystemPartitionCache.Identifier, rootMount, rootMountLength);
     gSystemPartitionCache.Identifier[rootMountLength] = 0x00;
     free(sectorBuffer);
@@ -182,10 +184,10 @@ void SystemPartition_Cache(SystemPartitionCache * pCache)
         cache->Flags = *(sectorBuf + 25);
         BYTE identifierLength = *(sectorBuf + 32);
         if (!(cache->Flags & 0x02)) identifierLength -= 2;
-        cache->Identifier = (PSTRING)malloc(parentIdentifierLength + 1 + identifierLength + 1);
+        cache->Identifier = (char *)malloc(parentIdentifierLength + 1 + identifierLength + 1);
         strncpy(cache->Identifier, pCache->Identifier, parentIdentifierLength);
         cache->Identifier[parentIdentifierLength] = '/';
-        strncpy(cache->Identifier + parentIdentifierLength + 1, (PSTRING)(sectorBuf + 33), identifierLength);
+        strncpy(cache->Identifier + parentIdentifierLength + 1, (const char *)(sectorBuf + 33), identifierLength);
         cache->Identifier[parentIdentifierLength + 1 + identifierLength] = 0x00;
         cache->Entries.Head = NULL;
         cache->Entries.Tail = NULL;
@@ -300,7 +302,7 @@ INT32 SystemPartition_ReadHandler(FileDescriptor * pDescriptor, void * pData, si
         UINT32 sectorConsumed = dataRemaining;
         if (sectorConsumed > sectorUsable) sectorConsumed = sectorUsable;
         if ((pDescriptor->Offset + sectorConsumed) > pDescriptor->TotalSize) sectorConsumed = pDescriptor->TotalSize - pDescriptor->Offset;
-        memcpy(pData + dataOffset, sectorBuffer + sectorOffset, sectorConsumed);
+        memcpy((PBYTE)pData + dataOffset, sectorBuffer + sectorOffset, sectorConsumed);
         pDescriptor->Offset += sectorConsumed;
         dataOffset += sectorConsumed;
         dataRemaining -= sectorConsumed;

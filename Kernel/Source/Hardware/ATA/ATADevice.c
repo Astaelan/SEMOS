@@ -1,4 +1,6 @@
+extern "C" {
 #include <stdlib.h>
+}
 #include <PortIO.h>
 #include <Hardware/PIC.h>
 #include <Hardware/ATA/ATADevice.h>
@@ -51,7 +53,7 @@ void ATADevice_SelectDrive(ATADevice * pDevice)
     for (int index = 0; index < 4; ++index) inb(pDevice->ControlRegister);
 }
 
-PSTRING ATADevice_GetTypeName(ATADevice* pDevice)
+const char * ATADevice_GetTypeName(ATADevice* pDevice)
 {
     switch (pDevice->Type)
     {

@@ -1,5 +1,7 @@
+extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
+}
 #include <PortIO.h>
 #include <Hardware/IDT.h>
 #include <Hardware/VGAText.h>

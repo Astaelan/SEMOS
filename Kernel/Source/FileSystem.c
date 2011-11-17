@@ -1,6 +1,8 @@
+extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+}
 #include <FileSystem.h>
 #include <Hardware/VGAText.h>
 
@@ -65,14 +67,14 @@ INT32 FileSystem_STDINRead(FileDescriptor * pDescriptor, void * pData, size_t pL
 INT32 FileSystem_STDOUTWrite(FileDescriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText_WriteString((PSTRING)pData, pLength);
+    VGAText_WriteString((const char *)pData, pLength);
     return (INT32)pLength;
 }
 
 INT32 FileSystem_STDERRWrite(FileDescriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText_WriteString((PSTRING)pData, pLength);
+    VGAText_WriteString((const char *)pData, pLength);
     return (INT32)pLength;
 }
 

@@ -6,15 +6,15 @@
 #define VGATEXT_DEFAULT_ROWS                    25
 #define VGATEXT_DEFAULT_ATTRIBUTES      0x0F
 
-PSTRING gVGATextBase = (PSTRING)VGATEXT_MEMORY_BASE;
+char *  gVGATextBase = (char *)VGATEXT_MEMORY_BASE;
 BYTE    gVGATextColumns = VGATEXT_DEFAULT_COLUMNS;
 BYTE    gVGATextRows = VGATEXT_DEFAULT_ROWS;
 BYTE    gVGATextCursorColumn = 0;
 BYTE    gVGATextCursorRow = 0;
-CHAR    gVGATextAttributes = VGATEXT_DEFAULT_ATTRIBUTES;
+char    gVGATextAttributes = VGATEXT_DEFAULT_ATTRIBUTES;
 
 
-PSTRING VGAText_Cursor()
+char * VGAText_Cursor()
 { return gVGATextBase + (((gVGATextCursorRow * gVGATextColumns) + gVGATextCursorColumn) * 2); }
 
 void VGAText_Next()
@@ -27,26 +27,26 @@ void VGAText_Next()
 	}
 }
 
-void VGAText_SetAttributes(CHAR pAttributes)
+void VGAText_SetAttributes(char pAttributes)
 { gVGATextAttributes = pAttributes; }
 
-void VGAText_WriteChar(CHAR pCharacter)
+void VGAText_WriteChar(char pCharacter)
 {
 	COMPortLogger_WriteData(pCharacter);
     if (pCharacter == '\n') VGAText_MoveToNextLine();
     else
     {
-	    PSTRING cursor = VGAText_Cursor();
+	    char * cursor = VGAText_Cursor();
 	    *cursor = pCharacter;
 	    *(cursor + 1) = gVGATextAttributes;
 	    VGAText_Next();
     }
 }
 
-void VGAText_WriteString(const PSTRING pString,
+void VGAText_WriteString(const char * pString,
                          UINT32 pLength)
 {
-    PSTRING iterator = pString;
+    const char * iterator = pString;
     BOOL useLength = pLength > 0;
     while (*iterator)
 	{
@@ -60,7 +60,7 @@ void VGAText_WriteString(const PSTRING pString,
     }
 }
 
-void VGAText_WriteLine(const PSTRING pString)
+void VGAText_WriteLine(const char * pString)
 {
 	VGAText_WriteString(pString, 0);
 	if (gVGATextCursorColumn > 0) VGAText_MoveToNextLine();
@@ -84,14 +84,14 @@ void VGAText_MoveToNextLine()
 	VGAText_MoveTo(0, gVGATextCursorRow + 1);
 }
 
-void VGAText_Clear(CHAR pAttributes)
+void VGAText_Clear(char pAttributes)
 {
 	VGAText_SetAttributes(pAttributes);
 	VGAText_MoveToTopLeft();
 	
 	INT32 index = 0;
 	INT32 count = gVGATextColumns * gVGATextRows;
-	PSTRING cursor = VGAText_Cursor();
+	char * cursor = VGAText_Cursor();
 	while (index < count)
 	{
 		*cursor = ' ';

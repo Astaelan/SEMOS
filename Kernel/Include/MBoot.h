@@ -1,7 +1,9 @@
 #ifndef _MBOOT_H
 #define _MBOOT_H
 
+extern "C" {
 #include <types.h>
+}
 
 typedef struct
 {

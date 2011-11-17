@@ -1,7 +1,9 @@
 #ifndef _RTC_H
 #define _RTC_H
 
+extern "C" {
 #include "types.h"
+}
 
 void RTC_Initialize();
 BYTE RTC_GetSecond();

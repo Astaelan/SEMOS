@@ -1,4 +1,6 @@
+extern "C" {
 #include <types.h>
+}
 #include <Hardware/GDT.h>
 
 #define GDTDESCRIPTOR_COUNT                         5
@@ -38,7 +40,9 @@ GDTDescriptor gGDTDescriptors[GDTDESCRIPTOR_COUNT];
 
 void GDT_SetGate(BYTE pIndex, UINT32 pBaseAddress, UINT32 pLimit, BYTE pAccess, BYTE pFlags);
 
+extern "C" {
 extern void GDT_Update(GDTRegister * pRegister);
+}
 
 void GDT_Initialize()
 {
