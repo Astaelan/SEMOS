@@ -16,12 +16,13 @@ UINT32 ATAPIDevice_ReadSector(ATADevice * pDevice,
                               PBYTE pBuffer)
 {
     /// Clean this up, ATAPI packet commands are 6 words (12 bytes)
-    BYTE cmdRead[12] = { ATAPIDEVICE_IO_COMMAND_READSECTORS, 0x00,
-                         (pLBA28Address >> 0x18) & 0xFF, (pLBA28Address >> 0x10) & 0xFF,
-                         (pLBA28Address >> 0x08) & 0xFF, (pLBA28Address >> 0x00) & 0xFF,
-                         0x00, 0x00,
-                         0x00, 0x01,
-                         0x00, 0x00 };
+    BYTE cmdRead[12];
+    cmdRead[0] = ATAPIDEVICE_IO_COMMAND_READSECTORS;
+    cmdRead[2] = (pLBA28Address >> 0x18) & 0xFF;
+    cmdRead[3] = (pLBA28Address >> 0x10) & 0xFF;
+    cmdRead[4] = (pLBA28Address >> 0x08) & 0xFF;
+    cmdRead[5] = (pLBA28Address >> 0x00) & 0xFF;
+    cmdRead[9] = 0x01;
 
     outb(pDevice->BaseRegister + ATADEVICE_IO_SELECT, pDevice->Drive & (1 << 4));
     outb(pDevice->BaseRegister + ATADEVICE_IO_FEATURES, 0x00);

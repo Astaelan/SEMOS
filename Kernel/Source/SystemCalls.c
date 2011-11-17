@@ -16,14 +16,16 @@ extern "C" {
 #include <Hardware/RTC.h>
 #include <Hardware/VGAText.h>
 
+extern "C" {
 #undef errno
 extern int  errno;
 
 int strncasecmp(const char *, const char *, size_t);
 
-extern "C" {
 void *__dso_handle = NULL;
+
 int kill(int pid, int sig);
+INT32 open(const char * pathname, int flags, mode_t mode);
 }
 
 void Halt() { __asm("hlt"); }
@@ -31,8 +33,8 @@ void Halt() { __asm("hlt"); }
 void Panic(const char * pMessage)
 {
     __asm("cli");
-	VGAText_Clear(VGATEXT_ATTRIBUTES(VGATEXT_ATTRIBUTE_DARK_BLACK, VGATEXT_ATTRIBUTE_LIGHT_RED));
-	VGAText_WriteLine(pMessage);
+	SEMOS::Hardware::VGAText::Clear(SEMOS::Hardware::VGAText::CreateAttributes(SEMOS::Hardware::VGAText::DarkBlack, SEMOS::Hardware::VGAText::LightRed));
+	SEMOS::Hardware::VGAText::WriteLine(pMessage);
 	while (TRUE) Halt();
 }
 

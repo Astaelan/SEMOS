@@ -32,11 +32,11 @@
     <ClCompile Include="Source\Hardware\PIT.c" />
     <ClCompile Include="Source\Hardware\RTC.c" />
     <ClCompile Include="Source\Hardware\SystemPartition.c" />
-    <ClCompile Include="Source\Hardware\VGAText.c" />
+    <ClCompile Include="Source\Hardware\VGAText.cpp" />
     <ClCompile Include="Source\Kernel.c" />
     <ClCompile Include="Source\MBoot.c" />
     <ClCompile Include="Source\SystemCalls.c" />
-    <ClCompile Include="Source\Utility\COMPortLogger.c" />
+    <ClCompile Include="Source\Utility\COMPortLogger.cpp" />
     <ClCompile Include="Source\Utility\List.c" />
   </ItemGroup>
   <ItemGroup>

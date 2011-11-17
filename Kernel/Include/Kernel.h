@@ -8,6 +8,8 @@ extern "C" {
 #include <time.h>
 }
 
+#include <iostream>
+
 #include <MBoot.h>
 #include <FileSystem.h>
 #include <Hardware/GDT.h>

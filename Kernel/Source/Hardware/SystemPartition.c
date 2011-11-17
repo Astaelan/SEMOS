@@ -13,11 +13,13 @@ extern "C" {
 #include <Hardware/ATA/ATAPIDevice.h>
 #include <Utility/List.h>
 
+extern "C" {
 #undef errno
 extern int  errno;
 
 char * strdup(const char *);
 int	strcasecmp(const char *, const char *);
+}
 
 typedef struct
 {

@@ -33,12 +33,6 @@
     <ClCompile Include="Source\Kernel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Hardware\VGAText.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility\COMPortLogger.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\MBoot.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,6 +70,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\DLMalloc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\COMPortLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\VGAText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
