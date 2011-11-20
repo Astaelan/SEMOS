@@ -13,16 +13,16 @@
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="Source\Kernel.ld" />
-    <None Include="Source\Boot.asm">
+    <None Include="Source\Core\GDTUpdate.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Source\IDT.asm">
+    <None Include="Source\Core\Boot.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Source\GDT.asm">
+    <None Include="Source\Core\IDTStubs.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Source\IDTStubs.asm">
+    <None Include="Source\Core\IDTUpdate.asm">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -30,12 +30,6 @@
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Kernel.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MBoot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Utility\List.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,28 +48,34 @@
     <ClCompile Include="Source\Hardware\PIC.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Hardware\GDT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\IDT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Hardware\PIT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SystemCalls.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FileSystem.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DLMalloc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Utility\COMPortLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Hardware\VGAText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Kernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\GDT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\MultiBoot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\SystemCalls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\DLMalloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\IDT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Hardware\VGAText.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\MBoot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\List.h">
@@ -116,22 +113,25 @@
     <ClInclude Include="Include\Hardware\PIC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Hardware\GDT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDTExternalStubs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDTInitializeStubs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Hardware\PIT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\FileSystem.h">
+    <ClInclude Include="Include\Core\GDT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\MultiBoot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\IDT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\IDTInitializeStubs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\IDTExternalStubs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

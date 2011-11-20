@@ -1,5 +1,4 @@
-#ifndef _PIC_H
-#define _PIC_H
+#pragma once
 
 extern "C" {
 #include <types.h>
@@ -16,5 +15,3 @@ extern "C" {
 #define PIC_IO_COMMAND_RESET        0x20
 
 void PIC_Initialize();
-
-#endif

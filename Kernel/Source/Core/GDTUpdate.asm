@@ -1,7 +1,7 @@
 .intel_syntax noprefix
-.global GDT_Update
+.global GDTUpdate
 
-GDT_Update:
+GDTUpdate:
 	cli
     mov eax, [esp+4]
     lgdt [eax]

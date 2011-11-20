@@ -1,3 +1,4 @@
+/*
 extern "C" {
 #include <errno.h>
 #include <stdlib.h>
@@ -313,3 +314,4 @@ INT32 SystemPartition_ReadHandler(FileDescriptor * pDescriptor, void * pData, si
     free(sectorBuffer);
     return dataOffset;
 }
+*/

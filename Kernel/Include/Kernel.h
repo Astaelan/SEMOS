@@ -10,16 +10,21 @@ extern "C" {
 
 #include <iostream>
 
-#include <MBoot.h>
-#include <FileSystem.h>
-#include <Hardware/GDT.h>
-#include <Hardware/IDT.h>
+#include <Core/MultiBoot.h>
+#include <Core/FileSystem.h>
+#include <Core/GDT.h>
+#include <Core/IDT.h>
 #include <Hardware/PIC.h>
 #include <Hardware/PIT.h>
 #include <Hardware/RTC.h>
 #include <Hardware/VGAText.h>
 #include <Hardware/SystemPartition.h>
 #include <Utility/COMPortLogger.h>
+
+using namespace SEMOS;
+using namespace SEMOS::Core;
+using namespace SEMOS::Hardware;
+using namespace SEMOS::Utility;
 
 // SystemCalls
 

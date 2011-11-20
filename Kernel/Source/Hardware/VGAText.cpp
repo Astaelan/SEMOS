@@ -4,14 +4,17 @@ extern "C" {
 #include <Hardware/VGAText.h>
 #include <Utility/COMPortLogger.h>
 
-uint8_t * SEMOS::Hardware::VGAText::sBaseMemory = (uint8_t *)SEMOS::Hardware::VGAText::BaseMemory;
-uint8_t SEMOS::Hardware::VGAText::sColumns = SEMOS::Hardware::VGAText::DefaultColumns;
-uint8_t SEMOS::Hardware::VGAText::sRows = SEMOS::Hardware::VGAText::DefaultRows;
-uint8_t SEMOS::Hardware::VGAText::sCursorColumn = 0;
-uint8_t SEMOS::Hardware::VGAText::sCursorRow = 0;
-uint8_t SEMOS::Hardware::VGAText::sAttributes = SEMOS::Hardware::VGAText::DefaultAttributes;
+using namespace SEMOS::Hardware;
+using namespace SEMOS::Utility;
 
-void SEMOS::Hardware::VGAText::Advance()
+uint8_t * VGAText::sBaseMemory = (uint8_t *)VGAText::BaseMemory;
+uint8_t VGAText::sColumns = VGAText::DefaultColumns;
+uint8_t VGAText::sRows = VGAText::DefaultRows;
+uint8_t VGAText::sCursorColumn = 0;
+uint8_t VGAText::sCursorRow = 0;
+uint8_t VGAText::sAttributes = VGAText::DefaultAttributes;
+
+void VGAText::Advance()
 {
 	++sCursorColumn;
 	if (sCursorColumn >= sColumns)
@@ -21,13 +24,13 @@ void SEMOS::Hardware::VGAText::Advance()
 	}
 }
 
-void SEMOS::Hardware::VGAText::WriteCharacter(char pCharacter)
+void VGAText::WriteCharacter(char pCharacter)
 {
     if (pCharacter == '\n')
     {
         MoveToNextLine();
-    	SEMOS::Utility::COMPortLogger::WriteByte('\r');
-    	SEMOS::Utility::COMPortLogger::WriteByte('\n');
+    	COMPortLogger::WriteByte('\r');
+    	COMPortLogger::WriteByte('\n');
     }
     else
     {
@@ -35,12 +38,12 @@ void SEMOS::Hardware::VGAText::WriteCharacter(char pCharacter)
 	    *cursor = pCharacter;
 	    *(cursor + 1) = sAttributes;
 	    Advance();
-    	SEMOS::Utility::COMPortLogger::WriteByte(pCharacter);
+    	COMPortLogger::WriteByte(pCharacter);
     }
 }
 
-void SEMOS::Hardware::VGAText::WriteString(const char * pString,
-                                           uint32_t pLength)
+void VGAText::WriteString(const char * pString,
+                          uint32_t pLength)
 {
     const char * iterator = pString;
     bool useLength = pLength > 0;
@@ -56,15 +59,15 @@ void SEMOS::Hardware::VGAText::WriteString(const char * pString,
     }
 }
 
-void SEMOS::Hardware::VGAText::WriteLine(const char * pString)
+void VGAText::WriteLine(const char * pString)
 {
 	WriteString(pString, 0);
 	if (sCursorColumn > 0) MoveToNextLine();
-    SEMOS::Utility::COMPortLogger::WriteByte('\r');
-    SEMOS::Utility::COMPortLogger::WriteByte('\n');
+    COMPortLogger::WriteByte('\r');
+    COMPortLogger::WriteByte('\n');
 }
 
-void SEMOS::Hardware::VGAText::Clear(uint8_t pAttributes)
+void VGAText::Clear(uint8_t pAttributes)
 {
 	SetAttributes(pAttributes);
 	MoveToTopLeft();

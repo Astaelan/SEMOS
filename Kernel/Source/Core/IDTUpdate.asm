@@ -1,19 +1,18 @@
-/ Special thanks to Sebastien De Greef for his help on this
 .intel_syntax noprefix
-.global IDT_Update
-.global IDT_ISR_Dispatch
-.global IDT_IRQ_Dispatch
+.global IDTUpdate
+.global IDTISRDispatch
+.global IDTIRQDispatch
 
-.extern IDT_ISR_Handler
-.extern IDT_IRQ_Handler
+.extern IDTISRHandler
+.extern IDTIRQHandler
 
-IDT_Update:
+IDTUpdate:
 	cli
     mov eax, [esp]+4 
     lidt [eax]      
     ret 
 
-IDT_ISR_Dispatch:
+IDTISRDispatch:
     pusha
     mov ax, ds
     push eax
@@ -24,7 +23,7 @@ IDT_ISR_Dispatch:
     mov fs, ax
     mov gs, ax
  
-    call IDT_ISR_Handler
+    call IDTISRHandler
  
 	pop eax
     mov ds, ax
@@ -37,7 +36,7 @@ IDT_ISR_Dispatch:
     sti
     iret
  
-IDT_IRQ_Dispatch:
+IDTIRQDispatch:
     pusha
     mov ax, ds
     push eax
@@ -48,7 +47,7 @@ IDT_IRQ_Dispatch:
     mov fs, ax
     mov gs, ax
  
-    call IDT_IRQ_Handler
+    call IDTIRQHandler
  
     pop ebx
     mov ds, bx

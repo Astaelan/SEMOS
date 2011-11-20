@@ -1,5 +1,4 @@
-#ifndef _pPortIO_H
-#define _pPortIO_H
+#pragma once
 
 #define pPortIO(bwl, bw, type)                              \
 static inline void out##bwl(int pPort,                      \
@@ -50,5 +49,3 @@ pPortIO(w, w, short)
 pPortIO(l, , int)
 
 #define IOWAIT()		__asm volatile( "outb %%al, $0x80" : : "a"(0) )
-
-#endif

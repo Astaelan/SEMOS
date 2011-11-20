@@ -4,10 +4,14 @@ extern "C" {
 #include <time.h>
 }
 #include <PortIO.h>
-#include <Hardware/IDT.h>
+#include <Core/IDT.h>
 #include <Hardware/PIC.h>
 #include <Hardware/PIT.h>
 #include <Hardware/VGAText.h>
+
+using namespace SEMOS;
+using namespace SEMOS::Core;
+using namespace SEMOS::Hardware;
 
 #define PIT_IO_BASE             0x40
 #define PIT_IRQ_BASE            0x00
@@ -24,7 +28,7 @@ extern "C" {
 
 UINT32 gPITTimerTicks = 0;
 
-static void PIT_InterruptHandler(Registers pRegisters)
+static void PIT_InterruptHandler(IDT::Registers pRegisters)
 {
     if(pRegisters.int_no) { }
     gPITTimerTicks++;
@@ -54,5 +58,5 @@ void PIT_Initialize(UINT32 pFrequency)
        outb(PIT_IO_BASE + PIT_IO_DATA0, h);
 
        // Register our interrupt handler
-       IDT_RegisterHandler(PIC_IRQ_MASTER_BASE + PIT_IRQ_BASE, &PIT_InterruptHandler);
+       IDT::RegisterHandler(PIC_IRQ_MASTER_BASE + PIT_IRQ_BASE, &PIT_InterruptHandler);
 }

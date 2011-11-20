@@ -7,11 +7,13 @@ MKDIR = ..\Tools\bin\mkdir
 OUT = ..\Build\boot\semos.bin
 GCCARGS = -I..\Libs\Core\Include -I..\Libs\Core\Include\c++ -I.\Include -include cstdint -std=c++0x -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
 LIB = ..\Libs\Core\LibSTDC++.lib ..\Libs\Core\LibC.lib ..\Libs\Core\LibM.lib ..\Libs\Core\LibGcc.lib
-OBJ = Object\Boot.o Object\GDT.o Object\IDT.o Object\IDTStubs.o Object\MBoot.o Object\DLMalloc.o Object\Kernel.o Object\SystemCalls.o Object\FileSystem.o \
-	  Object\Utility_COMPortLogger.o Object\Utility_List.o \
+OBJ = Object\Kernel.o \
+	  Object\Core_Boot.o Object\Core_GDTUpdate.o Object\Core_GDT.o Object\Core_IDTUpdate.o Object\Core_IDTStubs.o Object\Core_IDT.o \
+	  Object\Core_MultiBoot.o Object\Core_DLMalloc.o Object\Core_SystemCalls.o Object\Core_FileSystem.o \
 	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \
-	  Object\Hardware_GDT.o Object\Hardware_IDT.o Object\Hardware_PIC.o Object\Hardware_PIT.o Object\Hardware_RTC.o \
-	  Object\Hardware_SystemPartition.o Object\Hardware_VGAText.o
+	  Object\Hardware_PIC.o Object\Hardware_PIT.o Object\Hardware_RTC.o \
+	  Object\Hardware_SystemPartition.o Object\Hardware_VGAText.o \
+	  Object\Utility_COMPortLogger.o Object\Utility_List.o
 
 build:
   $(MKDIR) -p Object
@@ -29,37 +31,37 @@ clean:
 
 rebuild: clean build
 
-Object\Boot.o: Source\Boot.asm
+Object\Kernel.o: Source\Kernel.cpp
+  $(GCC) $(GCCARGS) $@ -c $?
+
+Object\Core_Boot.o: Source\Core\Boot.asm
   $(AS) -o $@ $?
 
-Object\IDT.o: Source\IDT.asm
+Object\Core_GDTUpdate.o: Source\Core\GDTUpdate.asm
   $(AS) -o $@ $?
 
-Object\IDTStubs.o: Source\IDTStubs.asm
+Object\Core_GDT.o: Source\Core\GDT.cpp
+  $(GCC) $(GCCARGS) $@ -c $?
+
+Object\Core_IDTUpdate.o: Source\Core\IDTUpdate.asm
   $(AS) -o $@ $?
 
-Object\GDT.o: Source\GDT.asm
+Object\Core_IDTStubs.o: Source\Core\IDTStubs.asm
   $(AS) -o $@ $?
 
-Object\MBoot.o: Source\MBoot.c
+Object\Core_IDT.o: Source\Core\IDT.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\DLMalloc.o: Source\DLMalloc.c
+Object\Core_MultiBoot.o: Source\Core\MultiBoot.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\Kernel.o: Source\Kernel.c
+Object\Core_DLMalloc.o: Source\Core\DLMalloc.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\SystemCalls.o: Source\SystemCalls.c
+Object\Core_SystemCalls.o: Source\Core\SystemCalls.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\FileSystem.o: Source\FileSystem.c
-  $(GCC) $(GCCARGS) $@ -c $?
-
-Object\Hardware_GDT.o: Source\Hardware\GDT.c
-  $(GCC) $(GCCARGS) $@ -c $?
-
-Object\Hardware_IDT.o: Source\Hardware\IDT.c
+Object\Core_FileSystem.o: Source\Core\FileSystem.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
 Object\Hardware_PIC.o: Source\Hardware\PIC.c

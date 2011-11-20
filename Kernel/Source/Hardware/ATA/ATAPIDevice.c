@@ -3,9 +3,13 @@ extern "C" {
 #include <stdio.h>
 }
 #include <PortIO.h>
-#include <Hardware/IDT.h>
+#include <Core/IDT.h>
 #include <Hardware/VGAText.h>
 #include <Hardware/ATA/ATAPIDevice.h>
+
+using namespace SEMOS;
+using namespace SEMOS::Core;
+using namespace SEMOS::Hardware;
 
 #define ATAPIDEVICE_IO_COMMAND_PACKET           0xA0
 #define ATAPIDEVICE_IO_COMMAND_READSECTORS      0xA8
@@ -35,14 +39,14 @@ UINT32 ATAPIDevice_ReadSector(ATADevice * pDevice,
     while (!((status = inb(pDevice->BaseRegister + ATADEVICE_IO_COMMAND)) & (ATADEVICE_IO_STATUS_DATAREQUEST | ATADEVICE_IO_STATUS_ERROR)));
     if (status & ATADEVICE_IO_STATUS_ERROR) return 0;
 
-    IDT_ScheduleInterrupt(pDevice->Interrupt);
+    IDT::Schedule(pDevice->Interrupt);
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 0));
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 1));
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 2));
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 3));
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 4));
     outw(pDevice->BaseRegister + ATADEVICE_IO_DATA, *(((UINT16 *)cmdRead) + 5));
-    IDT_WaitForInterrupt(pDevice->Interrupt);
+    IDT::WaitFor(pDevice->Interrupt);
 
     UINT32 sizeBytes = (inb(pDevice->BaseRegister + ATADEVICE_IO_ADDRESS2) << 8) | inb(pDevice->BaseRegister + ATADEVICE_IO_ADDRESS1);
     UINT32 sizeWords = sizeBytes >> 1;

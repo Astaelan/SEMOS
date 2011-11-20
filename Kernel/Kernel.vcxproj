@@ -12,49 +12,49 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
-    <None Include="Source\Boot.asm" />
-    <None Include="Source\GDT.asm" />
-    <None Include="Source\IDT.asm" />
-    <None Include="Source\IDTStubs.asm" />
+    <None Include="Source\Core\Boot.asm" />
+    <None Include="Source\Core\GDTUpdate.asm" />
+    <None Include="Source\Core\IDTUpdate.asm" />
+    <None Include="Source\Core\IDTStubs.asm" />
     <None Include="Source\Kernel.ld" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\DLMalloc.c" />
-    <ClCompile Include="Source\FileSystem.c" />
+    <ClCompile Include="Source\Core\DLMalloc.cpp" />
+    <ClCompile Include="Source\Core\FileSystem.cpp" />
     <ClCompile Include="Source\Hardware\ATA\ATADevice.c" />
     <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c" />
-    <ClCompile Include="Source\Hardware\GDT.c" />
-    <ClCompile Include="Source\Hardware\IDT.c" />
+    <ClCompile Include="Source\Core\GDT.cpp" />
+    <ClCompile Include="Source\Core\IDT.cpp" />
     <ClCompile Include="Source\Hardware\PIC.c" />
     <ClCompile Include="Source\Hardware\PIT.c" />
     <ClCompile Include="Source\Hardware\RTC.c" />
     <ClCompile Include="Source\Hardware\SystemPartition.c" />
     <ClCompile Include="Source\Hardware\VGAText.cpp" />
-    <ClCompile Include="Source\Kernel.c" />
-    <ClCompile Include="Source\MBoot.c" />
-    <ClCompile Include="Source\SystemCalls.c" />
+    <ClCompile Include="Source\Kernel.cpp" />
+    <ClCompile Include="Source\Core\MultiBoot.cpp" />
+    <ClCompile Include="Source\Core\SystemCalls.cpp" />
     <ClCompile Include="Source\Utility\COMPortLogger.cpp" />
     <ClCompile Include="Source\Utility\List.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\BCDHelper.h" />
-    <ClInclude Include="Include\FileSystem.h" />
+    <ClInclude Include="Include\Core\FileSystem.h" />
     <ClInclude Include="Include\Hardware\ATA\ATADevice.h" />
     <ClInclude Include="Include\Hardware\ATA\ATAPIDevice.h" />
-    <ClInclude Include="Include\Hardware\GDT.h" />
-    <ClInclude Include="Include\Hardware\IDT.h" />
-    <ClInclude Include="Include\Hardware\IDTExternalStubs.h" />
-    <ClInclude Include="Include\Hardware\IDTInitializeStubs.h" />
+    <ClInclude Include="Include\Core\GDT.h" />
+    <ClInclude Include="Include\Core\IDT.h" />
+    <ClInclude Include="Include\Core\IDTExternalStubs.h" />
+    <ClInclude Include="Include\Core\IDTInitializeStubs.h" />
     <ClInclude Include="Include\Hardware\PIC.h" />
     <ClInclude Include="Include\Hardware\PIT.h" />
     <ClInclude Include="Include\Hardware\RTC.h" />
     <ClInclude Include="Include\Hardware\SystemPartition.h" />
     <ClInclude Include="Include\Hardware\VGAText.h" />
     <ClInclude Include="Include\Kernel.h" />
-    <ClInclude Include="Include\MBoot.h" />
+    <ClInclude Include="Include\Core\MultiBoot.h" />
     <ClInclude Include="Include\PortIO.h" />
     <ClInclude Include="Include\Utility\COMPortLogger.h" />
     <ClInclude Include="Include\Utility\List.h" />
