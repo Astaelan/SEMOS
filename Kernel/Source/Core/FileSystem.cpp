@@ -1,8 +1,7 @@
 extern "C" {
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/stat.h>
-
-int	fileno(FILE *);
 }
 
 #include <Core/FileSystem.h>
@@ -25,15 +24,15 @@ uint32_t STDINRead(FileSystem::Descriptor * pDescriptor, void * pData, size_t pL
 uint32_t STDOUTWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText::WriteString((const char *)pData, pLength);
-    return (int32_t)pLength;
+    VGAText::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    return pLength;
 }
 
 uint32_t STDERRWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText::WriteString((const char *)pData, pLength);
-    return (int32_t)pLength;
+    VGAText::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    return pLength;
 }
 
 void FileSystem::Initialize()
@@ -41,29 +40,26 @@ void FileSystem::Initialize()
     sFileSystems = new std::map<std::string, FileSystem*>();
     sDescriptors = new Descriptor[MaxDescriptors]();
 
-    setbuf(stdin, NULL);
-    int32_t stdinIndex = fileno(stdin);
-    sDescriptors[stdinIndex].Active = true;
-    sDescriptors[stdinIndex].Device = stdinIndex;
-    sDescriptors[stdinIndex].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
-    sDescriptors[stdinIndex].TerminalStream = true;
-    sDescriptors[stdinIndex].Read = &STDINRead;
+    setbuf(stdin, nullptr);
+    sDescriptors[STDIN_FILENO].Active = true;
+    sDescriptors[STDIN_FILENO].Device = STDIN_FILENO;
+    sDescriptors[STDIN_FILENO].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
+    sDescriptors[STDIN_FILENO].TerminalStream = true;
+    sDescriptors[STDIN_FILENO].Read = &STDINRead;
 
-    setbuf(stdout, NULL);
-    int32_t stdoutIndex = fileno(stdout);
-    sDescriptors[stdoutIndex].Active = true;
-    sDescriptors[stdoutIndex].Device = stdoutIndex;
-    sDescriptors[stdoutIndex].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
-    sDescriptors[stdoutIndex].TerminalStream = true;
-    sDescriptors[stdoutIndex].Write = &STDOUTWrite;
+    setbuf(stdout, nullptr);
+    sDescriptors[STDOUT_FILENO].Active = true;
+    sDescriptors[STDOUT_FILENO].Device = STDOUT_FILENO;
+    sDescriptors[STDOUT_FILENO].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
+    sDescriptors[STDOUT_FILENO].TerminalStream = true;
+    sDescriptors[STDOUT_FILENO].Write = &STDOUTWrite;
 
-    setbuf(stderr, NULL);
-    int32_t stderrIndex = fileno(stderr);
-    sDescriptors[stderrIndex].Active = true;
-    sDescriptors[stderrIndex].Device = stderrIndex;
-    sDescriptors[stderrIndex].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
-    sDescriptors[stderrIndex].TerminalStream = true;
-    sDescriptors[stderrIndex].Write = &STDERRWrite;
+    setbuf(stderr, nullptr);
+    sDescriptors[STDERR_FILENO].Active = true;
+    sDescriptors[STDERR_FILENO].Device = STDERR_FILENO;
+    sDescriptors[STDERR_FILENO].Mode = S_IFCHR | ((S_IREAD | S_IWRITE) >> 3) | ((S_IREAD | S_IWRITE) >> 6);
+    sDescriptors[STDERR_FILENO].TerminalStream = true;
+    sDescriptors[STDERR_FILENO].Write = &STDERRWrite;
 }
 
 bool FileSystem::Register(const std::string & pRoot)

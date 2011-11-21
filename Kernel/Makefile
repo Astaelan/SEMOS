@@ -8,12 +8,12 @@ OUT = ..\Build\boot\semos.bin
 GCCARGS = -I..\Libs\Core\Include -I..\Libs\Core\Include\c++ -I.\Include -include cstdint -std=c++0x -Wall -Wextra -Werror -fno-builtin -nostdlib -fpack-struct=1 -nostartfiles -nodefaultlibs -o
 LIB = ..\Libs\Core\LibSTDC++.lib ..\Libs\Core\LibC.lib ..\Libs\Core\LibM.lib ..\Libs\Core\LibGcc.lib
 OBJ = Object\Kernel.o \
-	  Object\Core_Boot.o Object\Core_GDTUpdate.o Object\Core_GDT.o Object\Core_IDTUpdate.o Object\Core_IDTStubs.o Object\Core_IDT.o \
+	  Object\Core_COMPortLogger.o Object\Core_Boot.o Object\Core_GDTUpdate.o Object\Core_GDT.o Object\Core_IDTUpdate.o Object\Core_IDTStubs.o Object\Core_IDT.o \
 	  Object\Core_MultiBoot.o Object\Core_DLMalloc.o Object\Core_SystemCalls.o Object\Core_FileSystem.o \
-	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \
 	  Object\Hardware_PIC.o Object\Hardware_PIT.o Object\Hardware_RTC.o \
+	  Object\Hardware_ATA_ATADevice.o Object\Hardware_ATA_ATAPIDevice.o \
 	  Object\Hardware_SystemPartition.o Object\Hardware_VGAText.o \
-	  Object\Utility_COMPortLogger.o Object\Utility_List.o
+	  Object\Utility_List.o
 
 build:
   $(MKDIR) -p Object
@@ -32,6 +32,9 @@ clean:
 rebuild: clean build
 
 Object\Kernel.o: Source\Kernel.cpp
+  $(GCC) $(GCCARGS) $@ -c $?
+
+Object\Core_COMPortLogger.o: Source\Core\COMPortLogger.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
 Object\Core_Boot.o: Source\Core\Boot.asm
@@ -64,10 +67,10 @@ Object\Core_SystemCalls.o: Source\Core\SystemCalls.cpp
 Object\Core_FileSystem.o: Source\Core\FileSystem.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\Hardware_PIC.o: Source\Hardware\PIC.c
+Object\Hardware_PIC.o: Source\Hardware\PIC.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
-Object\Hardware_PIT.o: Source\Hardware\PIT.c
+Object\Hardware_PIT.o: Source\Hardware\PIT.cpp
   $(GCC) $(GCCARGS) $@ -c $?
 
 Object\Hardware_RTC.o: Source\Hardware\RTC.c
@@ -85,8 +88,5 @@ Object\Hardware_ATA_ATADevice.o: Source\Hardware\ATA\ATADevice.c
 Object\Hardware_ATA_ATAPIDevice.o: Source\Hardware\ATA\ATAPIDevice.c
   $(GCC) $(GCCARGS) $@ -c $?
   
-Object\Utility_COMPortLogger.o: Source\Utility\COMPortLogger.cpp
-  $(GCC) $(GCCARGS) $@ -c $?
-
 Object\Utility_List.o: Source\Utility\List.c
   $(GCC) $(GCCARGS) $@ -c $?

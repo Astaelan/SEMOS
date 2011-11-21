@@ -6,17 +6,15 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <glob.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 
 #undef errno
-extern int  errno;
+extern int errno;
 
-void *__dso_handle = NULL;
+void * __dso_handle = nullptr;
 
-int kill(int pid, int sig);
-INT32 open(const char * pathname, int flags, mode_t mode);
+int open(const char * pathname, int flags, mode_t mode);
 }
 
 #include <Core/MultiBoot.h>
@@ -59,94 +57,93 @@ void * sbrk(ptrdiff_t pAdjustment)
 			Panic("PANIC: Insufficient memory");
 		}
 		memoryMap->Used += pAdjustment;
-		return (caddr_t)(memoryMap->Address + (memoryMap->Used - pAdjustment));
+		return reinterpret_cast<void *>(memoryMap->Address + (memoryMap->Used - pAdjustment));
 	}
 	memoryMap->Used += pAdjustment;
 	if (memoryMap->Used == 0 && memoryMapIndex > 0) --memoryMapIndex;
 
-    return NULL;
+    return nullptr;
 }
 
-_PTR _malloc_r (struct _reent *r, size_t sz)
+_PTR _malloc_r(_reent * pReentrant, size_t pSize)
 {
-    if (r) { }
-    return malloc (sz);
+    if (pReentrant) { }
+    return malloc(pSize);
 }
 
-_PTR _calloc_r (struct _reent *r, size_t a, size_t b)
+_PTR _calloc_r(_reent * pReentrant, size_t pCount, size_t pSize)
 {
-    if (r) { }
-    return calloc (a, b);
+    if (pReentrant) { }
+    return calloc(pCount, pSize);
 }
 
-void _free_r (struct _reent *r, _PTR x)
+void _free_r(_reent * pReentrant, _PTR pMemory)
 {
-    if (r) { }
-    free (x);
+    if (pReentrant) { }
+    free(pMemory);
 }
 
-_PTR _realloc_r (struct _reent *r, _PTR x, size_t sz)
+_PTR _realloc_r(_reent * pReentrant, _PTR pMemory, size_t pSize)
 {
-    if (r) { }
-    return realloc (x, sz);
+    if (pReentrant) { }
+    return realloc(pMemory, pSize);
 }
 
-
-INT32 gettimeofday(struct timeval * tv,
-                   PVOID tz)
+int gettimeofday(timeval * pTime,
+                 void * pTimeZone)
 {
-	if (tv)
+	if (pTime)
 	{
-		tv->tv_sec = RTC_GetSecondsSinceEpoch();
-		tv->tv_usec = 0;
+		pTime->tv_sec = RTC_GetSecondsSinceEpoch();
+		pTime->tv_usec = 0;
 	}
-	if (tz)
+	if (pTimeZone)
 	{
-		struct timezone * temptz = (struct timezone*)tz;
-		temptz->tz_minuteswest = 0;
-		temptz->tz_dsttime = 0;
+		timezone * tz = reinterpret_cast<timezone *>(pTimeZone);
+		tz->tz_minuteswest = 0;
+		tz->tz_dsttime = 0;
 	}
 	return 0;
 }
 
-INT32 open(const char * pathname, int flags, mode_t mode)
+int open(const char * pPath, int pFlags, mode_t pMode)
 {
     char pathBuffer[MAXPATHLEN];
-    if (pathname[0] != '/')
+    if (pPath[0] != '/')
     {
         strcpy(pathBuffer, "/SYSTEM/");
-        strcat(pathBuffer, pathname);
-        pathname = pathBuffer;
+        strcat(pathBuffer, pPath);
+        pPath = pathBuffer;
     }
-    uint16_t fd = FileSystem::ReservedDescriptors;
+    uint16_t descriptorIndex = FileSystem::ReservedDescriptors;
     bool found = false;
-    while (fd < FileSystem::MaxDescriptors &&
-           !(found = !FileSystem::GetDescriptor(fd)->Active)) ++fd;
+    while (descriptorIndex < FileSystem::MaxDescriptors &&
+           !(found = !FileSystem::GetDescriptor(descriptorIndex)->Active)) ++descriptorIndex;
     if (!found)
     {
         errno = ENFILE;
         return -1;
     }
-    FileSystem::Descriptor * descriptor = FileSystem::GetDescriptor(fd);
+    FileSystem::Descriptor * descriptor = FileSystem::GetDescriptor(descriptorIndex);
 
     size_t rootLength = 1;
-    while (pathname[rootLength] != '/') ++rootLength;
-    std::string pathRoot(pathname, rootLength);
+    while (pPath[rootLength] != '/') ++rootLength;
+    std::string pathRoot(pPath, rootLength);
     FileSystem * fileSystem = FileSystem::GetFileSystem(pathRoot);
     if (!fileSystem)
     {
         errno = EACCES;
         return -1;
     }
-    return fileSystem->Open(descriptor, pathname, flags, mode);
+    return fileSystem->Open(descriptor, pPath, pFlags, pMode);
 }
 
-INT32 close(INT32 fd)
+int close(int pDescriptorIndex)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active ||
         !descriptor->Close)
     {
@@ -157,60 +154,60 @@ INT32 close(INT32 fd)
 }
 
 
-INT32 fstat(INT32 fd,
-            struct stat *buf)
+int fstat(int pDescriptorIndex,
+          struct stat * pStats)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
         return -1;
     }
-    buf->st_dev = descriptor->Device;
-    buf->st_ino = descriptor->BlockStart;
-    buf->st_mode = descriptor->Mode;
-    if (buf->st_mode & S_IFREG) buf->st_nlink = 1;
-    else buf->st_rdev = buf->st_dev;
-    buf->st_size = descriptor->TotalSize;
-    buf->st_blksize = descriptor->BlockSize;
-    buf->st_blocks = descriptor->BlockCount;
+    pStats->st_dev = descriptor->Device;
+    pStats->st_ino = descriptor->BlockStart;
+    pStats->st_mode = descriptor->Mode;
+    if (pStats->st_mode & S_IFREG) pStats->st_nlink = 1;
+    else pStats->st_rdev = pStats->st_dev;
+    pStats->st_size = descriptor->TotalSize;
+    pStats->st_blksize = descriptor->BlockSize;
+    pStats->st_blocks = descriptor->BlockCount;
     return 0;
 }
 
-INT32 stat(const char * path,
-           struct stat * buf)
+int stat(const char * pPath,
+         struct stat * pStats)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    INT32 fd = open(path, 0, 0);
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    int descriptorIndex = open(pPath, 0, 0);
+    if (descriptorIndex < 0 ||
+        descriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(descriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
         return -1;
     }
-    buf->st_dev = descriptor->Device;
-    buf->st_ino = descriptor->BlockStart;
-    buf->st_mode = descriptor->Mode;
-    if (buf->st_mode & S_IFREG) buf->st_nlink = 1;
-    else buf->st_rdev = buf->st_dev;
-    buf->st_size = descriptor->TotalSize;
-    buf->st_blksize = descriptor->BlockSize;
-    buf->st_blocks = descriptor->BlockCount;
-    close(fd);
+    pStats->st_dev = descriptor->Device;
+    pStats->st_ino = descriptor->BlockStart;
+    pStats->st_mode = descriptor->Mode;
+    if (pStats->st_mode & S_IFREG) pStats->st_nlink = 1;
+    else pStats->st_rdev = pStats->st_dev;
+    pStats->st_size = descriptor->TotalSize;
+    pStats->st_blksize = descriptor->BlockSize;
+    pStats->st_blocks = descriptor->BlockCount;
+    close(descriptorIndex);
     return 0;
 }
 
-INT32 isatty(INT32 fd)
+int isatty(int pDescriptorIndex)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
@@ -224,14 +221,14 @@ INT32 isatty(INT32 fd)
     return 1;
 }
 
-INT32 write(int fd,
-            const void * buf,
-            size_t count)
+int write(int pDescriptorIndex,
+          const void * pData,
+          size_t pLength)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
@@ -242,17 +239,17 @@ INT32 write(int fd,
         errno = EINVAL;
         return -1;
     }
-    return descriptor->Write(descriptor, buf, count);
+    return descriptor->Write(descriptor, pData, pLength);
 }
 
-off_t lseek(INT32 fd,
-            off_t offset,
-            INT32 whence)
+off_t lseek(int pDescriptorIndex,
+            off_t pOffset,
+            int pWhence)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
@@ -263,17 +260,17 @@ off_t lseek(INT32 fd,
         errno = EINVAL;
         return -1;
     }
-    return descriptor->LSeek(descriptor, offset, whence);
+    return descriptor->LSeek(descriptor, pOffset, pWhence);
 }
 
-int read(int fd,
-         void * buf,
-         size_t count)
+int read(int pDescriptorIndex,
+         void * pData,
+         size_t pLength)
 {
     FileSystem::Descriptor * descriptor = nullptr;
-    if (fd < 0 ||
-        fd >= FileSystem::MaxDescriptors ||
-        !(descriptor = FileSystem::GetDescriptor(fd)) ||
+    if (pDescriptorIndex < 0 ||
+        pDescriptorIndex >= FileSystem::MaxDescriptors ||
+        !(descriptor = FileSystem::GetDescriptor(pDescriptorIndex)) ||
         !descriptor->Active)
     {
         errno = EBADF;
@@ -284,58 +281,18 @@ int read(int fd,
         errno = EINVAL;
         return -1;
     }
-    return descriptor->Read(descriptor, buf, count);
+    return descriptor->Read(descriptor, pData, pLength);
 }
 
-char * getcwd(char * buf, size_t size)
+void abort()
 {
-    buf[0] = '/';
-    buf[1] = 0x00;
-    if (size) { }
-    return buf;
+    Panic("Aborted");
+    while(true);
 }
 
-void exit(int status)
+long sysconf(int pSetting)
 {
-    if (status) { }
-    while (TRUE);
-}
-
-void _exit(int status)
-{
-    if (status) { }
-    while (TRUE);
-}
-
-int	glob(const char * pattern, int flags, int (*errfunc)(const char * epath, int eerrno), glob_t * pglob)
-{
-    printf("GLOB!\n");
-    if (pattern && flags && errfunc && pglob) { }
-    return GLOB_NOSPACE;
-}
-
-void globfree(glob_t * pglob)
-{
-    printf("GLOBFREE!\n");
-    if (pglob) { }
-}
-
-int getpid()
-{
-    return 1;
-}
-
-int kill(int pid,
-         int sig)
-{
-  if (pid && sig) { }
-  errno = EINVAL;
-  return -1;
-}
-
-long sysconf(int name)
-{
-    if (name == _SC_PAGE_SIZE) return 1;
+    if (pSetting == _SC_PAGE_SIZE) return 1;
     errno = EINVAL;
     return -1;
 }

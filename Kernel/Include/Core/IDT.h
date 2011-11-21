@@ -37,22 +37,22 @@ namespace SEMOS
         private:
             enum Selector
             {
-                PriviledgeLevelRing0 = 0x0000,
-                PriviledgeLevelRing1 = 0x0001,
-                PriviledgeLevelRing2 = 0x0002,
-                PriviledgeLevelRing3 = 0x0003,
-                TableIndex = 0x0004,
-                DescriptorIndex = 0x0008
+                PriviledgeLevelRing0Selector = 0x0000,
+                PriviledgeLevelRing1Selector = 0x0001,
+                PriviledgeLevelRing2Selector = 0x0002,
+                PriviledgeLevelRing3Selector = 0x0003,
+                TableIndexSelector = 0x0004,
+                DescriptorIndexSelector = 0x0008
             };
 
             enum Type
             {
-                Task386Gate32Bit = 0x05,
-                Interrupt286Gate16Bit = 0x06,
-                Trap286Gate16Bit = 0x07,
-                Interrupt386Gate32Bit = 0x0E,
-                Trap386Gate32Bit = 0x0F,
-                Present = 0x80
+                Task386Gate32BitType = 0x05,
+                Interrupt286Gate16BitType = 0x06,
+                Trap286Gate16BitType = 0x07,
+                Interrupt386Gate32BitType = 0x0E,
+                Trap386Gate32BitType = 0x0F,
+                PresentType = 0x80
             };
 
             static Entry sEntries[];
@@ -64,7 +64,7 @@ namespace SEMOS
                                 uint16_t pSelector,
                                 uint8_t pTypeAndFlags);
             static void InitializeGate(uint8_t pIndex,
-                                       uint32_t pAddress) { SetGate(pIndex, pAddress, Selector::DescriptorIndex, Type::Interrupt386Gate32Bit | Type::Present); }
+                                       uint32_t pAddress) { SetGate(pIndex, pAddress, Selector::DescriptorIndexSelector, Type::Interrupt386Gate32BitType | Type::PresentType); }
 
         public:
 

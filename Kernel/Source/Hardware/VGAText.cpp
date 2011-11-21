@@ -1,11 +1,11 @@
 extern "C" {
 #include <stdio.h>
 }
+#include <Core/COMPortLogger.h>
 #include <Hardware/VGAText.h>
-#include <Utility/COMPortLogger.h>
 
+using namespace SEMOS::Core;
 using namespace SEMOS::Hardware;
-using namespace SEMOS::Utility;
 
 uint8_t * VGAText::sBaseMemory = (uint8_t *)VGAText::BaseMemory;
 uint8_t VGAText::sColumns = VGAText::DefaultColumns;

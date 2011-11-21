@@ -1,9 +1,14 @@
 extern "C" {
 #include <stdlib.h>
 }
-#include <PortIO.h>
+
 #include <Hardware/PIC.h>
 #include <Hardware/ATA/ATADevice.h>
+
+#include <PortIO.h>
+
+using namespace SEMOS;
+using namespace SEMOS::Hardware;
 
 #define ATADEVICE_SIGNATURE_PATA		    0x0000
 #define ATADEVICE_SIGNATURE_PATAPI		    0xEB14
@@ -21,7 +26,7 @@ ATADevice * ATADevice_Initialize(UINT16 pBaseRegister,
     ATADevice * device = (ATADevice *)malloc(sizeof(ATADevice));
     device->BaseRegister = pBaseRegister;
     device->ControlRegister = pControlRegister;
-    device->Interrupt = PIC_IRQ_MASTER_BASE + pInterrupt;
+    device->Interrupt = PIC::RemappedIRQOffset + pInterrupt;
     device->Drive = 0xA0 | (pSlave << 4);
 
     ATADevice_Reset(device);

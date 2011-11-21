@@ -26,10 +26,10 @@ void GDT::Initialize()
     sRegister.Address = (uint32_t)sEntries;
 
     SetGate(0, 0x00000000, 0x00000000, 0x00, 0x00);
-    SetGate(1, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresent | EntryAccess::Executable, EntryFlags::Selector32BitGranularity4KB);
-    SetGate(2, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresent, EntryFlags::Selector32BitGranularity4KB);
-    SetGate(3, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresent | EntryAccess::Executable | EntryAccess::Ring3, EntryFlags::Selector32BitGranularity4KB);
-    SetGate(4, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresent | EntryAccess::Ring3, EntryFlags::Selector32BitGranularity4KB);
+    SetGate(1, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresentAccess | EntryAccess::ExecutableAccess, EntryFlags::Selector32BitGranularity4KBFlags);
+    SetGate(2, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresentAccess, EntryFlags::Selector32BitGranularity4KBFlags);
+    SetGate(3, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresentAccess | EntryAccess::ExecutableAccess | EntryAccess::Ring3Access, EntryFlags::Selector32BitGranularity4KBFlags);
+    SetGate(4, 0x00000000, 0xFFFFFFFF, EntryAccess::ReadWriteOnePresentAccess | EntryAccess::Ring3Access, EntryFlags::Selector32BitGranularity4KBFlags);
     GDTUpdate(&sRegister);
 }
 

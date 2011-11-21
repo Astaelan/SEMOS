@@ -19,12 +19,13 @@ void Kernel(uint32_t pMultiBootMagic,
 
 	GDT::Initialize();
 	IDT::Initialize();
-	PIC_Initialize();
-	PIT_Initialize(1000);
+	PIC::Initialize();
+	PIT::Initialize(1000);
 	RTC_Initialize();
 
 	time_t startupTime = time(NULL);
 	printf("Startup @ %s\n", ctime(&startupTime));
 
-	//SystemPartition_Initialize();
+    //SystemPartition_Initialize();
+    while (true) ;
 }

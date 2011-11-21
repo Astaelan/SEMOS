@@ -27,27 +27,27 @@ namespace SEMOS
 
             enum EntryAccess
             {
-                Accessed = 0x01,
-                ReadWrite = 0x02,
-                DirectionConforming = 0x04,
-                Executable = 0x08,
-                One = 0x10,
+                AccessedAccess = 0x01,
+                ReadWriteAccess = 0x02,
+                DirectionConformingAccess = 0x04,
+                ExecutableAccess = 0x08,
+                OneAccess = 0x10,
 
-                Ring0 = 0x00,
-                Ring1 = 0x20,
-                Ring2 = 0x40,
-                Ring3 = 0x60,
-                Present = 0x80,
+                Ring0Access = 0x00,
+                Ring1Access = 0x20,
+                Ring2Access = 0x40,
+                Ring3Access = 0x60,
+                PresentAccess = 0x80,
 
-                ReadWriteOnePresent = ReadWrite | One | Present
+                ReadWriteOnePresentAccess = ReadWriteAccess | OneAccess | PresentAccess
             };
 
             enum EntryFlags
             {
-                Selector32Bit = 0x40,
-                Granularity4KB = 0x80,
+                Selector32BitFlag = 0x40,
+                Granularity4KBFlag = 0x80,
 
-                Selector32BitGranularity4KB = Selector32Bit | Granularity4KB
+                Selector32BitGranularity4KBFlags = Selector32BitFlag | Granularity4KBFlag
             };
 
         private:
