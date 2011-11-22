@@ -2,65 +2,74 @@ module Core.Debug;
 
 import Core.PortIO;
 
-class Debug
+public static class Debug
 {
-public static:
-    void Initialize() { COMWriter.Initialize(); }
-    void WriteCharacter(char pCharacter) { COMWriter.WriteByte(pCharacter); }
-    void WriteLine(const(char*) pLine) { COMWriter.WriteLine(pLine); }
+    public static void Initialize() 
+	{
+		COMLogger.Initialize(); 
+	}
+
+    public static void WriteCharacter(char pCharacter)
+	{
+		COMLogger.WriteByte(pCharacter); 
+	}
+
+    public static void WriteLine(string pLine)
+	{
+		COMLogger.WriteLine(pLine); 
+	}
 }
 
-private class COMWriter
+public static class COMLogger
 {
-private static:
-    const(uint) BaseAddress = 0x000002F8;
-    const(uint) WriteAttempts = 1000;
+	private const uint MaxWriteLoopIterations = 1000;
 
-    enum Register : ubyte
+	private const ushort IOPortBase =		0x2F8;
+	private const ushort DataPort =			IOPortBase;
+	private const ushort InterruptPort =	IOPortBase + 1;
+	private const ushort FIFOPort =			IOPortBase + 2;
+	private const ushort LineDataPort =		IOPortBase + 3;
+	private const ushort ModemDataPort =	IOPortBase + 4;
+	private const ushort LineStatusPort =	IOPortBase + 5;
+	private const ushort ModemStatusPort =	IOPortBase + 6;
+	private const ushort ScratchPort =		IOPortBase + 7;
+
+    private static bool IsTransmitEmpty()
+	{ 
+		return ((inb(LineStatusPort) & 0x20) != 0); 
+	}
+
+	shared static void Initialize()
+	{
+		outb(InterruptPort,		cast(byte)0x00);
+		outb(LineDataPort,		cast(byte)0x80);
+		outb(DataPort,			cast(byte)0x03);
+		outb(InterruptPort,		cast(byte)0x00);
+		outb(LineDataPort,		cast(byte)0x03);
+		outb(FIFOPort,			cast(byte)0xC7);
+		outb(ModemDataPort,		cast(byte)0x0B);
+	}
+
+    public static void WriteByte(ubyte pByte)
     {
-        DataRegister = 0x00,
-        InterruptRegister = 0x01,
-        FIFORegister = 0x02,
-        LineDataRegister = 0x03,
-        ModemDataRegister = 0x04,
-        LineStatusRegister = 0x05,
-        ModemStatusRegister = 0x06,
-        ScratchRegister = 0x07
+		for (uint i = 0; i < MaxWriteLoopIterations && IsTransmitEmpty(); i++)
+		{
+		}
+		outb(DataPort, pByte);
     }
 
-    bool TransmitEmpty() { return (inb(BaseAddress + Register.LineStatusRegister) & 0x20) != 0; }
-
-public static:
-    void Initialize()
+    public static void WriteString(string pString)
     {
-        outb(BaseAddress + Register.InterruptRegister, 0x00);
-        outb(BaseAddress + Register.LineDataRegister, 0x80);
-        outb(BaseAddress + Register.DataRegister, 0x03);
-        outb(BaseAddress + Register.InterruptRegister, 0x00);
-        outb(BaseAddress + Register.LineDataRegister, 0x03);
-        outb(BaseAddress + Register.FIFORegister, 0xC7);
-        outb(BaseAddress + Register.ModemDataRegister, 0x0B);
-    }
-
-    void WriteByte(ubyte pByte)
-    {
-        uint attempts = WriteAttempts;
-        while (attempts && !TransmitEmpty) --attempts;
-        outb(BaseAddress + Register.DataRegister, pByte);
-    }
-
-    void WriteString(const(char*) pString)
-    {
-        for (uint index = 0; pString[index]; ++index)
+        for (uint index = 0; index < pString.length; ++index)
         {
             WriteByte(pString[index]);
         }
     }
 
-    void WriteLine(const(char*) pLine)
+    public static void WriteLine(string pString)
     {
-        WriteString(pLine);
-        WriteByte(0x0D);
-        WriteByte(0x0A);
+        WriteString(pString);
+        WriteByte(cast(byte)'\r');
+        WriteByte(cast(byte)'\n');
     }
 }
