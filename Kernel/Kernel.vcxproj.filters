@@ -16,123 +16,13 @@
     <None Include="Source\Boot.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Source\IDT.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="Source\GDT.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="Source\IDTStubs.asm">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Kernel.c">
+    <ClCompile Include="Source\Kernel.d">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Hardware\VGAText.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility\COMPortLogger.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MBoot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility\List.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\SystemPartition.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\ATA\ATADevice.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\RTC.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\PIC.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\GDT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\IDT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\PIT.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SystemCalls.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FileSystem.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DLMalloc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Include\PortIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Kernel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\COMPortLogger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\VGAText.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\MBoot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\List.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\SystemPartition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\ATA\ATADevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\ATA\ATAPIDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\RTC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\BCDHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\PIC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\GDT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDTExternalStubs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\IDTInitializeStubs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\PIT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\FileSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
