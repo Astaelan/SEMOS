@@ -12,14 +12,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
-    <None Include="Source\Boot.asm" />
-    <None Include="Source\Kernel.ld" />
+    <None Include="Core\MultiBoot.d" />
+    <None Include="Core\SystemCalls.d" />
+    <None Include="Core\VGAText.d" />
+    <None Include="Boot.asm" />
+    <None Include="Kernel.d" />
+    <None Include="Kernel.ld" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\Kernel.d" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FACF6CC0-B659-4FD2-8BBD-A377A66CFE7C}</ProjectGuid>

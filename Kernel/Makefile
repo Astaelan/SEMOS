@@ -7,9 +7,12 @@ RM  = $(BIN)\rm
 MKISOFS  = $(BIN)\mkisofs
 MKDIR = $(BIN)\mkdir
 OUT = ..\Build\boot\semos.bin
-LDFLAGS = -L$(SDK)\i686-elf\lib -L$(SDK)\lib\gcc\i686-elf\4.6.2 -T Source\Kernel.ld
+LDFLAGS = -L$(SDK)\i686-elf\lib -L$(SDK)\lib\gcc\i686-elf\4.6.2 -T Kernel.ld
 LIBS = -lgdruntime -lgphobos2 -lgcc -lc -lm
-OBJ = Object\Boot.o Object\Kernel.o
+OBJ = Object\Boot.o Object\Kernel.o \
+	  Object\Core_MultiBoot.o \
+	  Object\Core_SystemCalls.o \
+	  Object\Core_VGAText.o
 
 build:
   $(MKDIR) -p Object
@@ -27,8 +30,17 @@ clean:
 
 rebuild: clean build
 
-Object\Boot.o: Source\Boot.asm
+Object\Boot.o: Boot.asm
   $(AS) -o $@ $?
 
-Object\Kernel.o: Source\Kernel.d
+Object\Kernel.o: Kernel.d
+  $(GDC) -o $@ -c $?
+
+Object\Core_MultiBoot.o: Core\MultiBoot.d
+  $(GDC) -o $@ -c $?
+
+Object\Core_SystemCalls.o: Core\SystemCalls.d
+  $(GDC) -o $@ -c $?
+
+Object\Core_VGAText.o: Core\VGAText.d
   $(GDC) -o $@ -c $?

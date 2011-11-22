@@ -12,17 +12,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
-    <None Include="Source\Kernel.ld" />
-    <None Include="Source\Boot.asm">
+    <None Include="Core\MultiBoot.d" />
+    <None Include="Core\SystemCalls.d" />
+    <None Include="Core\VGAText.d" />
+    <None Include="Boot.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Kernel.ld" />
+    <None Include="Kernel.d" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\Kernel.d">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

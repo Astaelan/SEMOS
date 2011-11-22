@@ -4,7 +4,7 @@ SECTIONS
 {
     . = 0x00100000;
 
-	_start = .;
+	KernelStart = .;
 
 	.text ALIGN (0x1000) :
 	{
@@ -29,9 +29,10 @@ SECTIONS
 		ebss = .;
 	}
 
-	_end = .;
+	KernelEnd = .;
 
 	_Dmain = .;
+	_end = .;
 	write = .;
 	pthread_detach = .;
 	__emutls_v._tlsend = .;
@@ -75,7 +76,6 @@ SECTIONS
 	__libc_stack_end = .;
 	etext = .;
 	_exit = .;
-	sbrk = .;
 	kill = .;
 	getpid = .;
 }
