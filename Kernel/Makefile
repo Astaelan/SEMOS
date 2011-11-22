@@ -10,7 +10,9 @@ OUT = ..\Build\boot\semos.bin
 LDFLAGS = -L$(SDK)\i686-elf\lib -L$(SDK)\lib\gcc\i686-elf\4.6.2 -T Kernel.ld
 LIBS = -lgdruntime -lgphobos2 -lgcc -lc -lm
 OBJ = Object\Boot.o Object\Kernel.o \
+	  Object\Core_Debug.o \
 	  Object\Core_MultiBoot.o \
+	  Object\Core_PortIO.o \
 	  Object\Core_SystemCalls.o \
 	  Object\Core_VGAText.o
 
@@ -36,7 +38,13 @@ Object\Boot.o: Boot.asm
 Object\Kernel.o: Kernel.d
   $(GDC) -o $@ -c $?
 
+Object\Core_Debug.o: Core\Debug.d
+  $(GDC) -o $@ -c $?
+
 Object\Core_MultiBoot.o: Core\MultiBoot.d
+  $(GDC) -o $@ -c $?
+
+Object\Core_PortIO.o: Core\PortIO.d
   $(GDC) -o $@ -c $?
 
 Object\Core_SystemCalls.o: Core\SystemCalls.d

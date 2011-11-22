@@ -20,6 +20,8 @@
     </None>
     <None Include="Kernel.ld" />
     <None Include="Kernel.d" />
+    <None Include="Core\Debug.d" />
+    <None Include="Core\PortIO.d" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />

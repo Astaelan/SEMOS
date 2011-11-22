@@ -1,5 +1,7 @@
 module Core.VGAText;
 
+import Core.Debug;
+
 class Console
 {
 private static:
@@ -59,6 +61,8 @@ public static:
         if (pCharacter == '\n')
         {
             MoveToNextLine();
+            Debug.WriteCharacter('\r');
+            Debug.WriteCharacter('\n');
         }
         else
         {
@@ -66,6 +70,7 @@ public static:
             *cursor = pCharacter;
             *(cursor + 1) = Attributes;
             Advance();
+            Debug.WriteCharacter(pCharacter);
         }
     }
     void WriteString(const(char*) pString,
@@ -86,6 +91,8 @@ public static:
     {
         WriteString(pLine, 0);
         if (sCursorX) MoveToNextLine();
+        Debug.WriteCharacter('\r');
+        Debug.WriteCharacter('\n');
     }
 
 }

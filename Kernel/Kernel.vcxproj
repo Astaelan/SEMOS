@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Core\Debug.d" />
+    <None Include="Core\PortIO.d" />
     <None Include="Makefile" />
     <None Include="Core\MultiBoot.d" />
     <None Include="Core\SystemCalls.d" />
