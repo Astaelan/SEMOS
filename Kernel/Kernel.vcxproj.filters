@@ -11,7 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Makefile" />
     <None Include="Core\MultiBoot.d" />
     <None Include="Core\SystemCalls.d" />
     <None Include="Core\VGAText.d" />
@@ -22,6 +21,7 @@
     <None Include="Kernel.d" />
     <None Include="Core\Debug.d" />
     <None Include="Core\PortIO.d" />
+    <None Include="Makefile.omake" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />

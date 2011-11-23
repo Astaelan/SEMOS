@@ -1,0 +1,84 @@
+#define PLATFORM(WINDOWS_X32);
+#define PLATFORM_ALIAS(WINDOWS_X32, WINDOWS_32);
+#define PLATFORM_ALIAS(WINDOWS_X32, WIN32);
+
+#define PLATFORM(LINUX_X32);
+#define PLATFORM_ALIAS(LINUX_X32, LINUX_32);
+#define PLATFORM_ALIAS(LINUX_X32, LINUX32);
+
+#define PLATFORM(MAC_OSX_X32);
+#define PLATFORM_ALIAS(MAC_OSX_X32, MAC_OSX_32);
+#define PLATFORM_ALIAS(MAC_OSX_X32, MAC32);
+
+
+#define TOOL(GDC, ../SDK/bin/i686-elf-gdc);
+#define TOOL_WIN32(GDC, ../SDK/bin/i686-elf-gdc.exe);
+
+#define TOOL(AS, ../SDK/bin/i686-elf-as);
+#define TOOL_WIN32(AS, ../SDK/bin/i686-elf-as.exe);
+
+#define TOOL(LD, ../SDK/bin/i686-elf-ld);
+#define TOOL_WIN32(LD, ../SDK/bin/i686-elf-ld.exe);
+
+#define TOOL(RM, ../SDK/bin/rm);
+#define TOOL_WIN32(RM, ../SDK/bin/rm.exe);
+
+#define TOOL(CP, ../SDK/bin/cp);
+#define TOOL_WIN32(CP, ../SDK/bin/cp.exe);
+
+#define TOOL(MKDIR, ../SDK/bin/mkdir);
+#define TOOL_WIN32(MKDIR, ../SDK/bin/mkdir.exe);
+
+#define TOOL(MKISOFS, ../SDK/bin/mkisofs);
+#define TOOL_WIN32(MKISOFS, ../SDK/bin/mkisofs.exe);
+
+
+#define CONST(GDC_ARGS, -g -c);
+#define CONST(LD_ARGS, -L../SDK/i686-elf/lib -L../SDK/lib/gcc/i686-elf/4.6.2 -T Kernel.ld);
+#define CONST(LD_LIBS, -lgdruntime -lgphobos2 -lgcc -lc -lm);
+#define CONST(RM_ARGS, -rf);
+#define CONST(CP_ARGS, -f);
+#define CONST(MKDIR_ARGS, -p);
+#define CONST(MKISOFS_ARGS, -V SEMOS -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table);
+
+#define CONST(OBJECT, ./Object);
+#define CONST(BUILD, ../Build);
+#define CONST(OUT, ${BUILD}/boot/semos.bin);
+#define CONST(ISO, ../SEMOS.iso);
+
+
+#define SOURCE(AS_ASM_FILES)
+{
+    Boot.asm
+}
+
+#define SOURCE(GDC_D_FILES)
+{
+    Kernel.d
+    Core/Debug.d
+    Core/MultiBoot.d
+    Core/PortIO.d
+    Core/SystemCalls.d
+    Core/VGAText.d
+}
+
+// Building starts here
+
+MKDIR ${MKDIR_ARGS} ${OBJECT}
+MKDIR ${MKDIR_ARGS} ${BUILD}/boot/grub
+
+common TOOL(AS -o ) : AS_ASM_FILES
+{
+    #prefix{${OBJECT}/$(FILENAME.NO_EXTENSION.DIR_TO_FILENAME).o} : ALL
+}
+
+common TOOL(GDC ${GDC_ARGS} -o ) : GDC_D_FILES
+{
+    #prefix{${OBJECT}/$(FILENAME.NO_EXTENSION.DIR_TO_FILENAME).o} : ALL
+}
+    
+LD ${LD_ARGS} -o ${OUT} ${${OBJECT}/&([GDC_D_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${${OBJECT}/&([AS_ASM_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${LD_LIBS}
+    
+CP ${CP_ARGS} ../SDK/grub/stage2_eltorito ${BUILD}/boot/grub
+CP ${CP_ARGS} ../SDK/grub/menu.lst ${BUILD}/boot/grub
+MKISOFS ${MKISOFS_ARGS} -o ${ISO} ${BUILD}

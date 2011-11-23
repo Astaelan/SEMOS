@@ -10,6 +10,5 @@ extern (C) void Kernel(uint pMultiBootMagic,
     Console.WriteLine("Booting SEMOS...");
 
     MultiBoot.Initialize(pMultiBootMagic, pMultiBootData);
-
     while(true) { }
 }
