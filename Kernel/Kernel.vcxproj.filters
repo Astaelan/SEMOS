@@ -13,7 +13,6 @@
   <ItemGroup>
     <None Include="Core\MultiBoot.d" />
     <None Include="Core\SystemCalls.d" />
-    <None Include="Core\VGAText.d" />
     <None Include="Boot.asm">
       <Filter>Source Files</Filter>
     </None>
@@ -22,6 +21,13 @@
     <None Include="Core\Debug.d" />
     <None Include="Core\PortIO.d" />
     <None Include="Makefile.omake" />
+    <None Include="Core\IDT.d" />
+    <None Include="Core\Console.d" />
+    <None Include="Hardware\PIC.d" />
+    <None Include="Core\GDT.d" />
+    <None Include="Core\GDTUpdate.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />

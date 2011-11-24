@@ -1,14 +1,14 @@
 module Core.SystemCalls;
 
+import Core.Console;
 import Core.MultiBoot;
-import Core.VGAText;
 
-void StopInterrupts() { asm { cli; } }
-void StartInterrupts() { asm { sti; } }
+public void StopInterrupts() { asm { cli; } }
+public void StartInterrupts() { asm { sti; } }
 
-void Halt() { asm { hlt; } }
+private void Halt() { asm { hlt; } }
 
-void Panic(const(char*) pMessage)
+public void Panic(const(char*) pMessage)
 {
     StopInterrupts();
     Console.Clear(Console.CreateAttributes(ConsoleColor.DarkBlack, ConsoleColor.LightRed));
@@ -16,7 +16,7 @@ void Panic(const(char*) pMessage)
     while (true) Halt();
 }
 
-extern (C) void* sbrk(int pAdjustment)
+private extern (C) void* sbrk(int pAdjustment)
 {
     static uint blockIndex;
     MultiBoot.Block* block = MultiBoot.GetBlock(blockIndex);

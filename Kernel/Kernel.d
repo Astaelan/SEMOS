@@ -1,6 +1,9 @@
+import Core.Console;
 import Core.Debug;
+import Core.GDT;
+import Core.IDT;
 import Core.MultiBoot;
-import Core.VGAText;
+import Hardware.PIC;
 
 extern (C) void Kernel(uint pMultiBootMagic,
                        void* pMultiBootData)
@@ -10,5 +13,11 @@ extern (C) void Kernel(uint pMultiBootMagic,
     Console.WriteLine("Booting SEMOS...");
 
     MultiBoot.Initialize(pMultiBootMagic, pMultiBootData);
+
+    GDT.Initialize();
+    //IDT.Initialize();
+    //PIC.Initialize();
+
+    Console.WriteLine("Booted");
     while(true) { }
 }

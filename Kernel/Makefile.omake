@@ -1,3 +1,6 @@
+#define CONST(NAME, SEMOS);
+
+
 #define PLATFORM(WINDOWS_X32);
 #define PLATFORM_ALIAS(WINDOWS_X32, WINDOWS_32);
 #define PLATFORM_ALIAS(WINDOWS_X32, WIN32);
@@ -39,33 +42,42 @@
 #define CONST(RM_ARGS, -rf);
 #define CONST(CP_ARGS, -f);
 #define CONST(MKDIR_ARGS, -p);
-#define CONST(MKISOFS_ARGS, -V SEMOS -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table);
+#define CONST(MKISOFS_ARGS, -quiet -V ${NAME} -rational-rock -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table);
 
 #define CONST(OBJECT, ./Object);
+#define CONST(LOGS, ../Logs);
 #define CONST(BUILD, ../Build);
-#define CONST(OUT, ${BUILD}/boot/semos.bin);
-#define CONST(ISO, ../SEMOS.iso);
+#define CONST(OUT, ${BUILD}/boot/${NAME}.bin);
+#define CONST(ISO, ../${NAME}.iso);
 
 
 #define SOURCE(AS_ASM_FILES)
 {
     Boot.asm
+	Core/GDTUpdate.asm
 }
 
 #define SOURCE(GDC_D_FILES)
 {
     Kernel.d
+    Core/Console.d
     Core/Debug.d
+	Core/GDT.d
+	Core/IDT.d
     Core/MultiBoot.d
     Core/PortIO.d
     Core/SystemCalls.d
-    Core/VGAText.d
+	Hardware/PIC.d
 }
 
 // Building starts here
 
 MKDIR ${MKDIR_ARGS} ${OBJECT}
+MKDIR ${MKDIR_ARGS} ${LOGS}
 MKDIR ${MKDIR_ARGS} ${BUILD}/boot/grub
+
+CP ${CP_ARGS} ../SDK/grub/stage2_eltorito ${BUILD}/boot/grub
+CP ${CP_ARGS} ../SDK/grub/menu.lst ${BUILD}/boot/grub
 
 common TOOL(AS -o ) : AS_ASM_FILES
 {
@@ -76,9 +88,7 @@ common TOOL(GDC ${GDC_ARGS} -o ) : GDC_D_FILES
 {
     #prefix{${OBJECT}/$(FILENAME.NO_EXTENSION.DIR_TO_FILENAME).o} : ALL
 }
-    
-LD ${LD_ARGS} -o ${OUT} ${${OBJECT}/&([GDC_D_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${${OBJECT}/&([AS_ASM_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${LD_LIBS}
-    
-CP ${CP_ARGS} ../SDK/grub/stage2_eltorito ${BUILD}/boot/grub
-CP ${CP_ARGS} ../SDK/grub/menu.lst ${BUILD}/boot/grub
+
+LD ${LD_ARGS} -o ${OUT} ${${OBJECT}/&([AS_ASM_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${${OBJECT}/&([GDC_D_FILES].NO_EXTENSION.DIR_TO_FILENAME).o} ${LD_LIBS}
+
 MKISOFS ${MKISOFS_ARGS} -o ${ISO} ${BUILD}

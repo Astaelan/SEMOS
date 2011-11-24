@@ -1,6 +1,6 @@
 module Core.PortIO;
 
-void outb(ushort pPort, ubyte pValue)
+public void outb(ushort pPort, ubyte pValue)
 {
     asm
     {
@@ -10,7 +10,7 @@ void outb(ushort pPort, ubyte pValue)
     }
 }
 
-void outw(ushort pPort, ushort pValue)
+public void outw(ushort pPort, ushort pValue)
 {
     asm
     {
@@ -20,7 +20,7 @@ void outw(ushort pPort, ushort pValue)
     }
 }
 
-void outl(ushort pPort, uint pValue)
+public void outl(ushort pPort, uint pValue)
 {
     asm
     {
@@ -30,7 +30,7 @@ void outl(ushort pPort, uint pValue)
     }
 }
 
-ubyte inb(ushort pPort)
+public ubyte inb(ushort pPort)
 {
     ubyte result = 0;
     asm
@@ -42,7 +42,7 @@ ubyte inb(ushort pPort)
     return result;
 }
 
-ushort inw(ushort pPort)
+public ushort inw(ushort pPort)
 {
     ushort result = 0;
     asm
@@ -54,7 +54,7 @@ ushort inw(ushort pPort)
     return result;
 }
 
-uint inl(ushort pPort)
+public uint inl(ushort pPort)
 {
     uint result = 0;
     asm
@@ -65,3 +65,5 @@ uint inl(ushort pPort)
     }
     return result;
 }
+
+public void iowait() { outb(0x80, 0x00); }

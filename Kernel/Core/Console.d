@@ -1,49 +1,48 @@
-module Core.VGAText;
+module Core.Console;
 
 import Core.Debug;
 
-class Console
+public static class Console
 {
-private static:
-    const(uint) BaseAddress = 0x000B8000;
-    const(ubyte) Width = 80;
-    const(ubyte) Height = 25;
+    private const uint BaseAddress = 0x000B8000;
+    private const ubyte Width = 80;
+    private const ubyte Height = 25;
 
-    ubyte sCursorX;
-    ubyte sCursorY;
-    ubyte sAttributes;
+    private static ubyte sCursorX;
+    private static ubyte sCursorY;
+    private static ubyte sAttributes;
 
-    ubyte* Cursor()
+    private static ubyte* Cursor()
     {
         return cast(ubyte*)(BaseAddress + (((sCursorY * Width) + sCursorX) * 2));
     }
-    void Advance()
+
+    private static void Advance()
     {
         ++sCursorX;
         if (sCursorX >= Width) MoveToNextLine();
     }
 
-public static:
-    void Initialize()
+    public static void Initialize()
     {
         sCursorX = 0;
         sCursorY = 0;
         Clear(CreateAttributes(ConsoleColor.LightWhite, ConsoleColor.DarkBlack));
     }
 
-    ubyte CreateAttributes(ConsoleColor pForeground, ConsoleColor pBackground) { return cast(ubyte)(pForeground | (pBackground << 4)); }
-    void Attributes(ubyte pAttributes) { sAttributes = pAttributes; }
-    ubyte Attributes() { return sAttributes; }
+    public static ubyte CreateAttributes(ConsoleColor pForeground, ConsoleColor pBackground) { return cast(ubyte)(pForeground | (pBackground << 4)); }
+    public static void Attributes(ubyte pAttributes) { sAttributes = pAttributes; }
+    public static ubyte Attributes() { return sAttributes; }
 
-    void MoveTo(ubyte pX, ubyte pY)
+    public static void MoveTo(ubyte pX, ubyte pY)
     {
         sCursorX = pX % Width;
         sCursorY = pY % Height;
     }
-    void MoveToOrigin() { MoveTo(0, 0); }
-    void MoveToNextLine() { MoveTo(0, cast(ubyte)(sCursorY + 1)); }
+    public static void MoveToOrigin() { MoveTo(0, 0); }
+    public static void MoveToNextLine() { MoveTo(0, cast(ubyte)(sCursorY + 1)); }
 
-    void Clear(ubyte pAttributes)
+    public static void Clear(ubyte pAttributes)
     {
         Attributes = pAttributes;
         MoveToOrigin();
@@ -56,7 +55,7 @@ public static:
         }
     }
 
-    void WriteCharacter(char pCharacter)
+    public static void WriteCharacter(char pCharacter)
     {
         if (pCharacter == '\n')
         {
@@ -73,8 +72,8 @@ public static:
             Debug.WriteCharacter(pCharacter);
         }
     }
-    void WriteString(const(char*) pString,
-                     uint pLength)
+    public static void WriteString(const(char*) pString,
+                                   uint pLength)
     {
         bool terminated = pLength == 0;
         for (uint index = 0; pString[index]; ++index)
@@ -87,14 +86,13 @@ public static:
             }
         }
     }
-    void WriteLine(const(char*) pLine)
+    public static void WriteLine(const(char*) pLine)
     {
         WriteString(pLine, 0);
         if (sCursorX) MoveToNextLine();
         Debug.WriteCharacter('\r');
         Debug.WriteCharacter('\n');
     }
-
 }
 
 enum ConsoleColor : ubyte

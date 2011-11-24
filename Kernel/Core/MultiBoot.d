@@ -1,7 +1,7 @@
 module Core.MultiBoot;
 
+import Core.Console;
 import Core.SystemCalls;
-import Core.VGAText;
 
 extern (C)
 {
@@ -9,19 +9,18 @@ extern (C)
     extern char KernelEnd;
 }
 
-class MultiBoot
+public static class MultiBoot
 {
-private static:
-    const(uint) Magic = 0x2BADB002;
-    const(uint) MemoryMapAvailable = 1;
-    const(uint) MemoryMapConventional = (1024 * 640);
-    const(uint) MaxBlocks = 64;
+    private const uint Magic = 0x2BADB002;
+    private const uint MemoryMapAvailable = 1;
+    private const uint MemoryMapConventional = (1024 * 640);
+    private const uint MaxBlocks = 64;
 
-    Header* sHeader;
-    Block sBlocks[MaxBlocks];
-    uint sBlockCount;
+    private static Header* sHeader;
+    private static Block sBlocks[MaxBlocks];
+    private static uint sBlockCount;
 
-    struct Header
+    private struct Header
     {
         uint Flags;
         uint MemoryLower;
@@ -38,7 +37,7 @@ private static:
         const(MemoryMap*) MemoryMaps;
     }
 
-    struct Module
+    private struct Module
     {
         uint Start;
         uint End;
@@ -46,7 +45,7 @@ private static:
         uint Reserved;
     }
 
-    struct MemoryMap
+    private struct MemoryMap
     {
         uint Size;
         uint AddressLow;
@@ -56,8 +55,7 @@ private static:
         uint Type;
     }
 
-public static:
-    struct Block
+    public struct Block
     {
         uint Address;
         uint Length;
@@ -65,7 +63,7 @@ public static:
         uint Reserved;
     }
 
-    void Initialize(uint pMagic, void* pData)
+    public static void Initialize(uint pMagic, void* pData)
     {
         if (pMagic != Magic) Panic("Boot loader did not provide multiboot data");
         sHeader = cast(Header*)pData;
@@ -102,11 +100,11 @@ public static:
         }
     }
 
-    Block* GetBlock(uint pIndex)
+    public static Block* GetBlock(uint pIndex)
     {
         if (pIndex >= sBlockCount) return null;
         return &sBlocks[pIndex];
     }
 
-    uint BlockCount() { return sBlockCount; }
+    public static uint BlockCount() { return sBlockCount; }
 }

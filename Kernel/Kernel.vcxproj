@@ -12,11 +12,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Debug.d" />
+    <None Include="Core\GDT.d" />
+    <None Include="Core\GDTUpdate.asm" />
+    <None Include="Core\IDT.d" />
     <None Include="Core\PortIO.d" />
     <None Include="Core\MultiBoot.d" />
     <None Include="Core\SystemCalls.d" />
-    <None Include="Core\VGAText.d" />
+    <None Include="Core\Console.d" />
     <None Include="Boot.asm" />
+    <None Include="Hardware\PIC.d" />
     <None Include="Kernel.d" />
     <None Include="Kernel.ld" />
     <None Include="Makefile.omake" />
