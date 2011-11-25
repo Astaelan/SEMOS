@@ -1,7 +1,6 @@
 #include <Core/IDT.h>
 #include <Hardware/PIC.h>
 #include <Hardware/PIT.h>
-#include <Hardware/VGAText.h>
 
 #include <PortIO.h>
 

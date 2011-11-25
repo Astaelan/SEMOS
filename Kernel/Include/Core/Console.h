@@ -4,7 +4,7 @@ namespace SEMOS
 {
     namespace Hardware
     {
-        class VGAText
+        class Console
         {
         private:
             static const uint32_t BaseMemory = 0x000B8000;

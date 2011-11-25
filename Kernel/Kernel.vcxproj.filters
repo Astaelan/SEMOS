@@ -11,7 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Makefile" />
     <None Include="Source\Kernel.ld" />
     <None Include="Source\Core\GDTUpdate.asm">
       <Filter>Source Files</Filter>
@@ -25,29 +24,12 @@
     <None Include="Source\Core\IDTUpdate.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Makefile.omake" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Utility\List.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\SystemPartition.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\ATA\ATADevice.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\RTC.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Hardware\VGAText.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Kernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,15 +60,30 @@
     <ClCompile Include="Source\Hardware\PIT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Core\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\RTC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\SystemPartition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\ATA\ATADevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\PortIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Kernel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Hardware\VGAText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Hardware\SystemPartition.h">
@@ -132,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

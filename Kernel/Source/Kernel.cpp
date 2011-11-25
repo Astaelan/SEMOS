@@ -10,7 +10,7 @@ void Kernel(uint32_t pMultiBootMagic,
 	COMPortLogger::Initialize();
 	COMPortLogger::WriteLine("See? It works!");
 
-	VGAText::Clear(VGAText::CreateAttributes(VGAText::Color::LightWhite, VGAText::Color::DarkBlack));
+	Console::Clear(Console::CreateAttributes(Console::Color::LightWhite, Console::Color::DarkBlack));
     if (!MultiBoot::Initialize(pMultiBootMagic, pMultiBootData)) Panic("PANIC: Bootloader did not pass valid multiboot data");
 
     FileSystem::Initialize();
@@ -23,9 +23,10 @@ void Kernel(uint32_t pMultiBootMagic,
 	PIT::Initialize(1000);
 	RTC_Initialize();
 
+    //SystemPartition_Initialize();
+
 	time_t startupTime = time(NULL);
 	printf("Startup @ %s\n", ctime(&startupTime));
 
-    //SystemPartition_Initialize();
     while (true) ;
 }

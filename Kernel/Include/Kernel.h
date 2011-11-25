@@ -11,6 +11,7 @@ extern "C" {
 #include <iostream>
 
 #include <Core/COMPortLogger.h>
+#include <Core/Console.h>
 #include <Core/MultiBoot.h>
 #include <Core/FileSystem.h>
 #include <Core/GDT.h>
@@ -18,7 +19,6 @@ extern "C" {
 #include <Hardware/PIC.h>
 #include <Hardware/PIT.h>
 #include <Hardware/RTC.h>
-#include <Hardware/VGAText.h>
 #include <Hardware/SystemPartition.h>
 
 using namespace SEMOS;

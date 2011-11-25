@@ -17,10 +17,10 @@ void * __dso_handle = nullptr;
 int open(const char * pathname, int flags, mode_t mode);
 }
 
+#include <Core/Console.h>
 #include <Core/MultiBoot.h>
 #include <Core/FileSystem.h>
 #include <Hardware/RTC.h>
-#include <Hardware/VGAText.h>
 
 using namespace SEMOS;
 using namespace SEMOS::Core;
@@ -31,8 +31,8 @@ void Halt() { __asm("hlt"); }
 void Panic(const char * pMessage)
 {
     __asm("cli");
-	VGAText::Clear(VGAText::CreateAttributes(VGAText::Color::DarkBlack, VGAText::Color::LightRed));
-	VGAText::WriteLine(pMessage);
+	Console::Clear(Console::CreateAttributes(Console::Color::DarkBlack, Console::Color::LightRed));
+	Console::WriteLine(pMessage);
 	while (TRUE) Halt();
 }
 

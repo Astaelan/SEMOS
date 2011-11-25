@@ -2,19 +2,19 @@ extern "C" {
 #include <stdio.h>
 }
 #include <Core/COMPortLogger.h>
-#include <Hardware/VGAText.h>
+#include <Core/Console.h>
 
 using namespace SEMOS::Core;
 using namespace SEMOS::Hardware;
 
-uint8_t * VGAText::sBaseMemory = (uint8_t *)VGAText::BaseMemory;
-uint8_t VGAText::sColumns = VGAText::DefaultColumns;
-uint8_t VGAText::sRows = VGAText::DefaultRows;
-uint8_t VGAText::sCursorColumn = 0;
-uint8_t VGAText::sCursorRow = 0;
-uint8_t VGAText::sAttributes = VGAText::DefaultAttributes;
+uint8_t * Console::sBaseMemory = (uint8_t *)Console::BaseMemory;
+uint8_t Console::sColumns = Console::DefaultColumns;
+uint8_t Console::sRows = Console::DefaultRows;
+uint8_t Console::sCursorColumn = 0;
+uint8_t Console::sCursorRow = 0;
+uint8_t Console::sAttributes = Console::DefaultAttributes;
 
-void VGAText::Advance()
+void Console::Advance()
 {
 	++sCursorColumn;
 	if (sCursorColumn >= sColumns)
@@ -24,7 +24,7 @@ void VGAText::Advance()
 	}
 }
 
-void VGAText::WriteCharacter(char pCharacter)
+void Console::WriteCharacter(char pCharacter)
 {
     if (pCharacter == '\n')
     {
@@ -42,7 +42,7 @@ void VGAText::WriteCharacter(char pCharacter)
     }
 }
 
-void VGAText::WriteString(const char * pString,
+void Console::WriteString(const char * pString,
                           uint32_t pLength)
 {
     const char * iterator = pString;
@@ -59,7 +59,7 @@ void VGAText::WriteString(const char * pString,
     }
 }
 
-void VGAText::WriteLine(const char * pString)
+void Console::WriteLine(const char * pString)
 {
 	WriteString(pString, 0);
 	if (sCursorColumn > 0) MoveToNextLine();
@@ -67,7 +67,7 @@ void VGAText::WriteLine(const char * pString)
     COMPortLogger::WriteByte('\n');
 }
 
-void VGAText::Clear(uint8_t pAttributes)
+void Console::Clear(uint8_t pAttributes)
 {
 	SetAttributes(pAttributes);
 	MoveToTopLeft();

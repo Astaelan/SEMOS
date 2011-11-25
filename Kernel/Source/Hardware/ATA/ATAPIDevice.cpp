@@ -4,12 +4,10 @@ extern "C" {
 }
 #include <PortIO.h>
 #include <Core/IDT.h>
-#include <Hardware/VGAText.h>
 #include <Hardware/ATA/ATAPIDevice.h>
 
 using namespace SEMOS;
 using namespace SEMOS::Core;
-using namespace SEMOS::Hardware;
 
 #define ATAPIDEVICE_IO_COMMAND_PACKET           0xA0
 #define ATAPIDEVICE_IO_COMMAND_READSECTORS      0xA8

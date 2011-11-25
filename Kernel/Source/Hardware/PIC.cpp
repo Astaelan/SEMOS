@@ -1,5 +1,4 @@
 #include <Hardware/PIC.h>
-#include <Hardware/VGAText.h>
 
 #include <PortIO.h>
 

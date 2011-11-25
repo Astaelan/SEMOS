@@ -4,8 +4,8 @@ extern "C" {
 #include <sys/stat.h>
 }
 
+#include <Core/Console.h>
 #include <Core/FileSystem.h>
-#include <Hardware/VGAText.h>
 
 using namespace SEMOS;
 using namespace SEMOS::Core;
@@ -24,14 +24,14 @@ uint32_t STDINRead(FileSystem::Descriptor * pDescriptor, void * pData, size_t pL
 uint32_t STDOUTWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    Console::WriteString(reinterpret_cast<const char *>(pData), pLength);
     return pLength;
 }
 
 uint32_t STDERRWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
 {
     if (pDescriptor) { }
-    VGAText::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    Console::WriteString(reinterpret_cast<const char *>(pData), pLength);
     return pLength;
 }
 

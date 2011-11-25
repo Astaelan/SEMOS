@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Makefile" />
+    <None Include="Makefile.omake" />
     <None Include="Source\Core\Boot.asm" />
     <None Include="Source\Core\GDTUpdate.asm" />
     <None Include="Source\Core\IDTUpdate.asm" />
@@ -24,20 +24,20 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\DLMalloc.cpp" />
     <ClCompile Include="Source\Core\FileSystem.cpp" />
-    <ClCompile Include="Source\Hardware\ATA\ATADevice.c" />
-    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.c" />
+    <ClCompile Include="Source\Hardware\ATA\ATADevice.cpp" />
+    <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.cpp" />
     <ClCompile Include="Source\Core\GDT.cpp" />
     <ClCompile Include="Source\Core\IDT.cpp" />
     <ClCompile Include="Source\Hardware\PIC.cpp" />
     <ClCompile Include="Source\Hardware\PIT.cpp" />
-    <ClCompile Include="Source\Hardware\RTC.c" />
-    <ClCompile Include="Source\Hardware\SystemPartition.c" />
-    <ClCompile Include="Source\Hardware\VGAText.cpp" />
+    <ClCompile Include="Source\Hardware\RTC.cpp" />
+    <ClCompile Include="Source\Hardware\SystemPartition.cpp" />
+    <ClCompile Include="Source\Core\Console.cpp" />
     <ClCompile Include="Source\Kernel.cpp" />
     <ClCompile Include="Source\Core\MultiBoot.cpp" />
     <ClCompile Include="Source\Core\SystemCalls.cpp" />
     <ClCompile Include="Source\Core\COMPortLogger.cpp" />
-    <ClCompile Include="Source\Utility\List.c" />
+    <ClCompile Include="Source\Utility\List.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\BCDHelper.h" />
@@ -52,7 +52,7 @@
     <ClInclude Include="Include\Hardware\PIT.h" />
     <ClInclude Include="Include\Hardware\RTC.h" />
     <ClInclude Include="Include\Hardware\SystemPartition.h" />
-    <ClInclude Include="Include\Hardware\VGAText.h" />
+    <ClInclude Include="Include\Core\Console.h" />
     <ClInclude Include="Include\Kernel.h" />
     <ClInclude Include="Include\Core\MultiBoot.h" />
     <ClInclude Include="Include\PortIO.h" />
@@ -87,28 +87,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>nmake /nologo build</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeBuildCommandLine>
     <NMakeOutput>semos.bin</NMakeOutput>
-    <NMakeCleanCommandLine>nmake /nologo clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>nmake /nologo rebuild</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\Include;..\Libs\Core\Include</NMakeIncludeSearchPath>
-    <IncludePath>..\Libs\Core\Include;$(IncludePath)</IncludePath>
+    <NMakeIncludeSearchPath>.\Include;..\SDK\include</NMakeIncludeSearchPath>
+    <IncludePath>..\SDK\include;$(IncludePath)</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <SourcePath />
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>nmake /nologo build</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeBuildCommandLine>
     <NMakeOutput>semos.bin</NMakeOutput>
-    <NMakeCleanCommandLine>nmake /nologo clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>nmake /nologo rebuild</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\Include;..\Libs\Core\Include</NMakeIncludeSearchPath>
-    <IncludePath>..\Libs\Core\Include;$(IncludePath)</IncludePath>
+    <NMakeIncludeSearchPath>.\Include;..\SDK\include</NMakeIncludeSearchPath>
+    <IncludePath>..\SDK\include;$(IncludePath)</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <SourcePath />
