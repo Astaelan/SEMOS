@@ -1,6 +1,8 @@
 /Build
 /Logs
 /SDK
+/SDKInstaller.exe
+/SDKInstaller.pdb
 /SEMOS.iso
 /SEMOS.sdf
 /SEMOS.opensdf
@@ -8,3 +10,5 @@
 
 /Kernel/Object
 /Kernel/Kernel.log
+
+/SDKInstaller/obj
