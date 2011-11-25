@@ -1,11 +1,4 @@
-#ifndef _BCDHELPER_H
-#define _BCDHELPER_H
+#pragma once
 
-extern "C" {
-#include "types.h"
-}
-
-static inline BYTE BCDHelper_FromBCD(BYTE value)
-{ return (BYTE)(((value >> 4) & 0x0F) * 10 + (value & 0x0F)); }
-
-#endif
+static inline uint8_t BCDHelper_FromBCD(uint8_t value)
+{ return (((value >> 4) & 0x0F) * 10 + (value & 0x0F)); }

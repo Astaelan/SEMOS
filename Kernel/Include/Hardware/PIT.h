@@ -7,16 +7,12 @@ namespace SEMOS
         class PIT
         {
         private:
-            static const uint16_t BaseAddress = 0x0040;
+            static const uint16_t BaseIOPort = 0x0040;
+            static const uint16_t Counter0IOPort = BaseIOPort + 0x00;
+            static const uint16_t Counter1IOPort = BaseIOPort + 0x01;
+            static const uint16_t Counter2IOPort = BaseIOPort + 0x02;
+            static const uint16_t CommandIOPort  = BaseIOPort + 0x03;
             static const uint16_t BaseIRQ = 0x00;
-
-            enum Register
-            {
-                Counter0Register = 0x00,
-                Counter1Register = 0x01,
-                Counter2Register = 0x02,
-                CommandRegister = 0x03
-            };
 
             enum Command
             {

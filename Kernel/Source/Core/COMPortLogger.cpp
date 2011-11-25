@@ -6,25 +6,25 @@ using namespace SEMOS::Core;
 
 void COMPortLogger::Initialize()
 {
-	outb(BaseAddress + Register::InterruptRegister, 0x00);
-	outb(BaseAddress + Register::LineDataRegister, 0x80);
-	outb(BaseAddress + Register::DataRegister, 0x03);
-	outb(BaseAddress + Register::InterruptRegister, 0x00);
-	outb(BaseAddress + Register::LineDataRegister, 0x03);
-	outb(BaseAddress + Register::FIFORegister, 0xC7);
-	outb(BaseAddress + Register::ModemDataRegister, 0x0B);
+	outb(InterruptIOPort, 0x00);
+	outb(LineDataIOPort, 0x80);
+	outb(DataIOPort, 0x03);
+	outb(InterruptIOPort, 0x00);
+	outb(LineDataIOPort, 0x03);
+	outb(FIFOIOPort, 0xC7);
+	outb(ModemDataIOPort, 0x0B);
 }
 
 bool COMPortLogger::IsTransmitEmpty()
 {
-	return (inb(BaseAddress + Register::LineStatusRegister) & 0x20) != 0;
+	return (inb(LineStatusIOPort) & 0x20) != 0;
 }
 
 void COMPortLogger::WriteByte(uint8_t pByte)
 {
 	uint32_t attempts = WriteAttempts;
 	while (attempts && !IsTransmitEmpty()) --attempts;
-	outb(BaseAddress + Register::DataRegister, pByte);
+	outb(DataIOPort, pByte);
 }
 
 void COMPortLogger::WriteString(const char * pString)

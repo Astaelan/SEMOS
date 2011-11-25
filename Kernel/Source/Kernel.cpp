@@ -21,7 +21,7 @@ void Kernel(uint32_t pMultiBootMagic,
 	IDT::Initialize();
 	PIC::Initialize();
 	PIT::Initialize(1000);
-	RTC_Initialize();
+	RTC::Initialize();
 
     //SystemPartition_Initialize();
 

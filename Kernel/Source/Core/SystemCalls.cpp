@@ -94,7 +94,7 @@ int gettimeofday(timeval * pTime,
 {
 	if (pTime)
 	{
-		pTime->tv_sec = RTC_GetSecondsSinceEpoch();
+		pTime->tv_sec = RTC::GetSecondsSinceEpoch();
 		pTime->tv_usec = 0;
 	}
 	if (pTimeZone)

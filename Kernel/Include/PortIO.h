@@ -1,6 +1,6 @@
 #pragma once
 
-#define pPortIO(bwl, bw, type)                              \
+#define PortIO(bwl, bw, type)                              \
 static inline void out##bwl(int pPort,                      \
                             unsigned type pValue)           \
 {                                                           \
@@ -44,8 +44,8 @@ static inline void ins##bwl(int pPort,                      \
 		     : "+D"(pAddress), "+c"(pCount) : "d"(pPort));  \
 }
 
-pPortIO(b, b, char)
-pPortIO(w, w, short)
-pPortIO(l, , int)
+PortIO(b, b, char)
+PortIO(w, w, short)
+PortIO(l, , int)
 
 #define IOWAIT()		__asm volatile( "outb %%al, $0x80" : : "a"(0) )

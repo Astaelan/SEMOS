@@ -7,15 +7,14 @@ namespace SEMOS
         class PIC
         {
         private:
-            static const uint8_t MasterAddress = 0x20;
-            static const uint8_t SlaveAddress = 0xA0;
-            
-            enum Register
-            {
-                CommandRegister = 0x00,
-                DataRegister = 0x01
-            };
+            static const uint8_t MasterIOPort        = 0x20;
+            static const uint8_t MasterCommandIOPort = MasterIOPort + 0x00;
+            static const uint8_t MasterDataIOPort    = MasterIOPort + 0x01;
 
+            static const uint8_t SlaveIOPort         = 0xA0;
+            static const uint8_t SlaveCommandIOPort  = SlaveIOPort + 0x00;
+            static const uint8_t SlaveDataIOPort     = SlaveIOPort + 0x01;
+            
             enum Command
             {
                 ConfigModeCommand = 0x01,

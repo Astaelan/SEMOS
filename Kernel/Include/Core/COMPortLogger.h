@@ -7,19 +7,15 @@ namespace SEMOS
         class COMPortLogger
         {
         private:
-            static const uint16_t BaseAddress = 0x02F8;
-
-            enum Register
-            {
-                DataRegister = 0x00,
-                InterruptRegister = 0x01,
-                FIFORegister = 0x02,
-                LineDataRegister = 0x03,
-                ModemDataRegister = 0x04,
-                LineStatusRegister = 0x05,
-                ModemStatusRegister = 0x06,
-                ScratchRegister = 0x07
-            };
+            static const uint16_t BaseIOPort        = 0x02F8;
+            static const uint16_t DataIOPort        = BaseIOPort + 0x00;
+            static const uint16_t InterruptIOPort   = BaseIOPort + 0x01;
+            static const uint16_t FIFOIOPort        = BaseIOPort + 0x02;
+            static const uint16_t LineDataIOPort    = BaseIOPort + 0x03;
+            static const uint16_t ModemDataIOPort   = BaseIOPort + 0x04;
+            static const uint16_t LineStatusIOPort  = BaseIOPort + 0x05;
+            static const uint16_t ModemStatusIOPort = BaseIOPort + 0x06;
+            static const uint16_t ScratchIOPort     = BaseIOPort + 0x07;
 
             static const uint32_t WriteAttempts = 1000;
 

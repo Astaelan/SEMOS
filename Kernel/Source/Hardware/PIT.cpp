@@ -25,15 +25,15 @@ void PIT::Initialize(uint32_t pFrequency)
        uint32_t divisor = MaxFrequency / pFrequency;
 
        // Send the command byte.
-       outb(BaseAddress + Register::CommandRegister, Command::Counter0InitializeCommand);
+       outb(CommandIOPort, Command::Counter0InitializeCommand);
 
        // Divisor has to be sent byte-wise, so split here into upper/lower bytes.
        uint8_t low = divisor & 0xFF;
        uint8_t high = (divisor >> 8) & 0xFF;
 
        // Send the frequency divisor.
-       outb(BaseAddress + Register::Counter0Register, low);
-       outb(BaseAddress + Register::Counter0Register, high);
+       outb(Counter0IOPort, low);
+       outb(Counter0IOPort, high);
 
        // Register our interrupt handler
        IDT::RegisterHandler(PIC::RemappedIRQOffset + BaseIRQ, &PITInterruptHandler);

@@ -8,29 +8,29 @@ using namespace SEMOS::Hardware;
 void PIC::Initialize()
 {
 	// ICW 1
-	outb(MasterAddress + Register::CommandRegister, Command::ConfigModeCommand | Command::InitializeCommand); IOWAIT();
-	outb(SlaveAddress + Register::CommandRegister, Command::ConfigModeCommand | Command::InitializeCommand); IOWAIT();
+	outb(MasterCommandIOPort, Command::ConfigModeCommand | Command::InitializeCommand); IOWAIT();
+	outb(SlaveCommandIOPort, Command::ConfigModeCommand | Command::InitializeCommand); IOWAIT();
 
 	// ICW 2
-	outb(MasterAddress + Register::DataRegister, RemappedIRQOffset); IOWAIT();
-	outb(SlaveAddress + Register::DataRegister, RemappedIRQOffset + 0x08); IOWAIT();
+	outb(MasterDataIOPort, RemappedIRQOffset); IOWAIT();
+	outb(SlaveDataIOPort, RemappedIRQOffset + 0x08); IOWAIT();
 
 	// ICW 3
-	outb(MasterAddress + Register::DataRegister, Line::MasterToSlaveLine); IOWAIT();
-	outb(SlaveAddress + Register::DataRegister, Line::SlaveToMasterLine); IOWAIT();
+	outb(MasterDataIOPort, Line::MasterToSlaveLine); IOWAIT();
+	outb(SlaveDataIOPort, Line::SlaveToMasterLine); IOWAIT();
 
 	// ICW 4
-	outb(MasterAddress + Register::DataRegister, Mode::Microprocessor8086Mode); IOWAIT();
-	outb(SlaveAddress + Register::DataRegister, Mode::Microprocessor8086Mode); IOWAIT();
+	outb(MasterDataIOPort, Mode::Microprocessor8086Mode); IOWAIT();
+	outb(SlaveDataIOPort, Mode::Microprocessor8086Mode); IOWAIT();
 
-	outb(MasterAddress + Register::DataRegister, 0x00); IOWAIT();
-	outb(SlaveAddress + Register::DataRegister, 0x00); IOWAIT();
+	outb(MasterDataIOPort, 0x00); IOWAIT();
+	outb(SlaveDataIOPort, 0x00); IOWAIT();
 
 	__asm volatile("sti");
 }
 
 void PIC::ResetIRQ(bool pSlave)
 {
-    if (pSlave) outb(SlaveAddress + Register::CommandRegister, Command::ResetCommand);
-    outb(MasterAddress + Register::CommandRegister, Command::ResetCommand);
+    if (pSlave) outb(SlaveCommandIOPort, Command::ResetCommand);
+    outb(MasterCommandIOPort, Command::ResetCommand);
 }
