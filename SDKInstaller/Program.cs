@@ -1,137 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SDKInstaller
 {
-    static class Program
+    internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
+        private static string sURL = "https://github.com/downloads/Astaelan/SEMOS/";
+        private static string sPackageList = "SDKInstaller.xml";
+        private static string sTarget = "i686-elf";
+        private static string sHost = "i386-mingw32";
+        private static string[] sOptionals = new string[0];
+
+        private static string sExtractorFile = "";
+        private static string sDownloadFile = "";
+        private static ManualResetEvent sDownloadEvent = new ManualResetEvent(false);
+        private static object sDownloadLock = new object();
+        private static bool sDownloadResult = false;
+
         [STAThread]
-        static void Main(string[] prms)
+        private static void Main(string[] pCommandLine)
         {
-            //if (prms.Length > 0 && prms[0] == "-silent")
-            //{
+            Arguments args = new Arguments(pCommandLine);
+            if (args.Contains("url")) sURL = args["url"];
+            if (args.Contains("target")) sTarget = args["target"];
+            if (args.Contains("host")) sHost = args["host"];
+            if (args.Contains("optional")) sOptionals = args["optional"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            Console.WriteLine("Downloading {0}...", sPackageList);
+            Console.Title = string.Format("SDKInstaller: Downloading {0}", sPackageList);
+            WebClient client = new WebClient();
+            try { client.DownloadFile(sURL + sPackageList, sPackageList); }
+            catch (Exception exc)
             {
-                string buf = "";
-                List<string> ValidTargets = new List<string>();
-                List<string> ValidHosts = new List<string>();
-                // First string is argument, second is name.
-                Dictionary<string, string> ValidLibraries = new Dictionary<string, string>();
-                List<string> WindowsHosts = new List<string>();
-
-                #region Get the lists of valid hosts, targets, and libraries
-                WebClient clnt = new WebClient();
-                // Targets.txt
-                using (StreamReader rdr = new StreamReader(new MemoryStream(clnt.DownloadData("http://server3.binarycompany.com/downloads/Targets.txt"))))
-                {
-                    while (!rdr.EndOfStream)
-                    {
-                        buf = rdr.ReadLine();
-                        if (buf != "")
-                            ValidTargets.Add(buf);
-                    }
-                }
-                // Hosts.txt
-                using (StreamReader rdr = new StreamReader(new MemoryStream(clnt.DownloadData("http://server3.binarycompany.com/downloads/Hosts.txt"))))
-                {
-                    while (!rdr.EndOfStream)
-                    {
-                        buf = rdr.ReadLine();
-                        if (buf != "")
-                            ValidHosts.Add(buf);
-                    }
-                }
-                // Libs.txt
-                using (StreamReader rdr = new StreamReader(new MemoryStream(clnt.DownloadData("http://server3.binarycompany.com/downloads/Libs.txt"))))
-                {
-                    while (!rdr.EndOfStream)
-                    {
-                        buf = rdr.ReadLine();
-                        if (buf != "")
-                        {
-                            string[] tmp = buf.Split(new char[] { '|' });
-                            if (tmp.Length != 2)
-                                throw new Exception("To many arguments in the lib name!");
-                            ValidLibraries.Add(tmp[1].ToLower(), tmp[0]);
-                        }
-                    }
-                }
-                // WindowsHosts.txt
-                using (StreamReader rdr = new StreamReader(new MemoryStream(clnt.DownloadData("http://server3.binarycompany.com/downloads/WindowsHosts.txt"))))
-                {
-                    while (!rdr.EndOfStream)
-                    {
-                        buf = rdr.ReadLine();
-                        if (buf != "")
-                            WindowsHosts.Add(buf);
-                    }
-                }
-                #endregion
-
-                #region Parse Parameters
-                List<string> parms = new List<string>(prms);
-                Configuration config = new Configuration();
-                foreach (string s in parms)
-                {
-                    if (s.ToLower().StartsWith("-target="))
-                    {
-                        buf = s.Substring(8);
-                        if (!ValidTargets.Contains(buf))
-                        {
-                            Console.WriteLine("Invalid Target Provided!");
-                            return;
-                        }
-                        config.ToolsTargetType = buf;
-                    }
-                    else if (s.ToLower().StartsWith("-host="))
-                    {
-                        buf = s.Substring(6);
-                        if (!ValidHosts.Contains(buf))
-                        {
-                            Console.WriteLine("Invalid Host Provided!");
-                            return;
-                        }
-                        config.ToolsHostType = buf;
-                    }
-                    // Otherwise the arg must be one of the dynamically loaded ones.
-                    else
-                    {
-                        if (!ValidLibraries.ContainsKey(s.ToLower()))
-                        {
-                            Console.WriteLine("Unknown Switch: '" + s.ToLower() + "'");
-                            return;
-                        }
-                        else
-                        {
-                            config.AdditionalLibraries.Add(ValidLibraries[s.ToLower()]);
-                        }
-                    }
-                }
-                #endregion
-
-                if (WindowsHosts.Contains(config.ToolsHostType))
-                {
-                    config.IsWindows = true;
-                }
-                else
-                {
-                    config.IsWindows = false;
-                }
-                SDKInstaller inst = new SDKInstaller(config);
-                inst.Install();
+                Console.WriteLine("Failed: {0}", exc.Message);
+                return;
             }
-            ////}
-            ////else
-            ////{
-            ////    Application.EnableVisualStyles();
-            ////    Application.SetCompatibleTextRenderingDefault(false);
-            ////    Application.Run(new Form1());
-            ////}
+            SDKInstaller installer = null;
+            using (XmlReader reader = XmlReader.Create(sPackageList)) installer = (SDKInstaller)(new XmlSerializer(typeof(SDKInstaller))).Deserialize(reader);
+            File.Delete(sPackageList);
+            Console.WriteLine("Found {0} package{1}...", installer.Packages.Count, installer.Packages.Count == 1 ? "" : "s");
+
+            SDKInstaller.SDKPackage package = installer.Packages.Find(p => p.Target == sTarget && p.Host == sHost);
+            if (package == null)
+            {
+                Console.WriteLine("There is no SDK package available for {0}-{1}", sTarget, sHost);
+                return;
+            }
+
+            client.DownloadFileCompleted += DownloadFileCompleted;
+            client.DownloadProgressChanged += DownloadProgressChanged;
+
+            sDownloadFile = string.Format("7za-{0}.exe", sHost);
+            Console.WriteLine("Downloading {0}...", sDownloadFile);
+            sDownloadEvent.Reset();
+            client.DownloadFileAsync(new Uri(sURL + sDownloadFile), sDownloadFile);
+            sDownloadEvent.WaitOne();
+            sExtractorFile = sDownloadFile;
+
+            if (!sDownloadResult) return;
+            sDownloadResult = false;
+
+            sDownloadFile = string.Format("SDK-{0}-{1}.7z", sTarget, sHost);
+            Console.WriteLine("Downloading {0}...", sDownloadFile);
+            sDownloadEvent.Reset();
+            client.DownloadFileAsync(new Uri(sURL + sDownloadFile), sDownloadFile);
+            sDownloadEvent.WaitOne();
+
+            if (!sDownloadResult) return;
+            sDownloadResult = false;
+
+            Console.WriteLine("Extracting {0}...", sDownloadFile);
+            Console.Title = string.Format("SDKInstaller: Extracting {0}", sDownloadFile);
+
+            Process extract = new Process();
+            extract.StartInfo.FileName = Path.GetFullPath(sExtractorFile);
+            extract.StartInfo.Arguments = "x -y " + sDownloadFile;
+            extract.StartInfo.UseShellExecute = false;
+            extract.Start();
+            extract.WaitForExit();
+
+            Console.WriteLine();
+            Console.WriteLine("Done, press any key to exit.");
+            Console.ReadKey(true);
         }
+
+        private static void DownloadFileCompleted(object pSender, AsyncCompletedEventArgs pArgs)
+        {
+            lock (sDownloadLock)
+            {
+                sDownloadResult = !pArgs.Cancelled;
+                Console.WriteLine();
+                sDownloadEvent.Set();
+            }
+        }
+
+        private static void DownloadProgressChanged(object pSender, DownloadProgressChangedEventArgs pArgs)
+        {
+            lock (sDownloadLock)
+            {
+                Console.CursorLeft = 0;
+                Console.Write("Progress {0,3}% [{1,-50}]", pArgs.ProgressPercentage, new string('.', pArgs.ProgressPercentage / 2));
+                Console.Title = string.Format("SDKInstaller: Downloading {0}, {1}%", sDownloadFile, pArgs.ProgressPercentage);
+            }
+        }
+
     }
 }

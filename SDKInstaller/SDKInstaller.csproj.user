@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>-target=i686-elf -host=i386-mingw32</StartArguments>
-    <StartWorkingDirectory>..\</StartWorkingDirectory>
+    <StartWorkingDirectory>.\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>-target=i686-elf -host=i386-mingw32</StartArguments>
-    <StartWorkingDirectory>..\</StartWorkingDirectory>
+    <StartWorkingDirectory>.\</StartWorkingDirectory>
   </PropertyGroup>
 </Project>

@@ -1,8 +1,10 @@
+/*.exe
+/*.7z
+/*.pdb
+/*.manifest
 /Build
 /Logs
 /SDK
-/SDKInstaller.exe
-/SDKInstaller.pdb
 /SEMOS.iso
 /SEMOS.sdf
 /SEMOS.opensdf
