@@ -66,16 +66,19 @@
     <ClCompile Include="Source\Hardware\RTC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Hardware\SystemPartition.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility\List.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Hardware\ATA\ATADevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Hardware\ATA\ATAPIDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Hardware\BootPartition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\DeviceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,9 +89,6 @@
     <ClInclude Include="Include\Kernel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Hardware\SystemPartition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Hardware\ATA\ATADevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,9 +96,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Hardware\RTC.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\BCDHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Hardware\PIC.h">
@@ -128,10 +125,19 @@
     <ClInclude Include="Include\Core\COMPortLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Utility\List.h">
+    <ClInclude Include="Include\Core\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Core\Console.h">
+    <ClInclude Include="Include\JIT\Translator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Hardware\BootPartition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\DeviceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Core\Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

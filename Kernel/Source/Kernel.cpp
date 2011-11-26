@@ -7,16 +7,22 @@ void Kernel(uint32_t pMultiBootMagic, void * pMultiBootData);
 void Kernel(uint32_t pMultiBootMagic,
             void * pMultiBootData)
 {
-	COMPortLogger::Initialize();
-	COMPortLogger::WriteLine("See? It works!");
+    if (!MultiBoot::Initialize(pMultiBootMagic, pMultiBootData)) return;
+
+    DeviceManager::Initialize();
+
+    COMPortLogger* comPortLogger = new COMPortLogger();
+    if (!DeviceManager::RegisterCOMPortLogger(comPortLogger))
+    {
+        delete comPortLogger;
+        return;
+    }
+	DeviceManager::COMPortLoggersWriteLine("See? It works!");
 
 	Console::Clear(Console::CreateAttributes(Console::Color::LightWhite, Console::Color::DarkBlack));
-    if (!MultiBoot::Initialize(pMultiBootMagic, pMultiBootData)) Panic("PANIC: Bootloader did not pass valid multiboot data");
+    Console::WriteLine("Booting SEMOS...");
 
     FileSystem::Initialize();
-
-    printf("Booting SEMOS...\n");
-
 	GDT::Initialize();
 	IDT::Initialize();
 	PIC::Initialize();

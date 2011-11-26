@@ -62,6 +62,8 @@
     Source/Kernel.cpp
     Source/Core/COMPortLogger.cpp
 	Source/Core/Console.cpp
+	Source/Core/Device.cpp
+	Source/Core/DeviceManager.cpp
 	Source/Core/DLMalloc.cpp
 	Source/Core/FileSystem.cpp
 	Source/Core/GDT.cpp
@@ -70,11 +72,10 @@
 	Source/Core/SystemCalls.cpp
 	Source/Hardware/ATA/ATADevice.cpp
 	Source/Hardware/ATA/ATAPIDevice.cpp
+	Source/Hardware/BootPartition.cpp
 	Source/Hardware/PIC.cpp
 	Source/Hardware/PIT.cpp
 	Source/Hardware/RTC.cpp
-	Source/Hardware/SystemPartition.cpp
-	Source/Utility/List.cpp
 }
 
 MKDIR ${MKDIR_ARGS} ${OBJECT}

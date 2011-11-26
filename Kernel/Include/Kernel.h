@@ -13,13 +13,14 @@ extern "C" {
 #include <Core/COMPortLogger.h>
 #include <Core/Console.h>
 #include <Core/MultiBoot.h>
+#include <Core/DeviceManager.h>
 #include <Core/FileSystem.h>
 #include <Core/GDT.h>
 #include <Core/IDT.h>
+#include <Hardware/BootPartition.h>
 #include <Hardware/PIC.h>
 #include <Hardware/PIT.h>
 #include <Hardware/RTC.h>
-#include <Hardware/SystemPartition.h>
 
 using namespace SEMOS;
 using namespace SEMOS::Core;

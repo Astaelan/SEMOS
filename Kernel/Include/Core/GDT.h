@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 namespace SEMOS
 {
     namespace Core
@@ -51,7 +53,9 @@ namespace SEMOS
             };
 
         private:
-            static Entry sEntries[];
+            typedef std::array<Entry, MaxEntries> EntryArray;
+
+            static EntryArray sEntries;
 
             static void SetGate(uint8_t pIndex, uint32_t pAddress, uint32_t pLimit, uint8_t pAccess, uint8_t pFlags);
 

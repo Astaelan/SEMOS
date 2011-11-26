@@ -1,11 +1,30 @@
 #include <Core/COMPortLogger.h>
+#include <Core/Console.h>
 
 #include <PortIO.h>
 
 using namespace SEMOS::Core;
 
-void COMPortLogger::Initialize()
+bool COMPortLogger::Initialize()
 {
+    if (!IsIOPortAvailable(DataIOPort) ||
+        !IsIOPortAvailable(InterruptIOPort) ||
+        !IsIOPortAvailable(FIFOIOPort) ||
+        !IsIOPortAvailable(LineDataIOPort) ||
+        !IsIOPortAvailable(ModemDataIOPort) ||
+        !IsIOPortAvailable(LineStatusIOPort) ||
+        !IsIOPortAvailable(ModemStatusIOPort) ||
+        !IsIOPortAvailable(ScratchIOPort)) return false;
+
+    ClaimIOPort(DataIOPort);
+    ClaimIOPort(InterruptIOPort);
+    ClaimIOPort(FIFOIOPort);
+    ClaimIOPort(LineDataIOPort);
+    ClaimIOPort(ModemDataIOPort);
+    ClaimIOPort(LineStatusIOPort);
+    ClaimIOPort(ModemStatusIOPort);
+    ClaimIOPort(ScratchIOPort);
+
 	outb(InterruptIOPort, 0x00);
 	outb(LineDataIOPort, 0x80);
 	outb(DataIOPort, 0x03);
@@ -13,11 +32,20 @@ void COMPortLogger::Initialize()
 	outb(LineDataIOPort, 0x03);
 	outb(FIFOIOPort, 0xC7);
 	outb(ModemDataIOPort, 0x0B);
+
+    return true;
 }
 
-bool COMPortLogger::IsTransmitEmpty()
+void COMPortLogger::Cleanup()
 {
-	return (inb(LineStatusIOPort) & 0x20) != 0;
+    ReleaseIOPort(DataIOPort);
+    ReleaseIOPort(InterruptIOPort);
+    ReleaseIOPort(FIFOIOPort);
+    ReleaseIOPort(LineDataIOPort);
+    ReleaseIOPort(ModemDataIOPort);
+    ReleaseIOPort(LineStatusIOPort);
+    ReleaseIOPort(ModemStatusIOPort);
+    ReleaseIOPort(ScratchIOPort);
 }
 
 void COMPortLogger::WriteByte(uint8_t pByte)
@@ -27,9 +55,9 @@ void COMPortLogger::WriteByte(uint8_t pByte)
 	outb(DataIOPort, pByte);
 }
 
-void COMPortLogger::WriteString(const char * pString)
+void COMPortLogger::WriteString(const char* pString)
 {
-	const char * iterator = pString;
+	const char* iterator = pString;
 	while (*iterator)
 	{
 		WriteByte(*iterator);
@@ -42,4 +70,9 @@ void COMPortLogger::WriteLine(const char * pLine)
 	WriteString(pLine);
 	WriteByte(0x0D);
 	WriteByte(0x0A);
+}
+
+bool COMPortLogger::IsTransmitEmpty()
+{
+	return (inb(LineStatusIOPort) & 0x20) != 0;
 }

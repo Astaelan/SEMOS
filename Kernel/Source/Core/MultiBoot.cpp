@@ -3,8 +3,8 @@
 using namespace SEMOS;
 using namespace SEMOS::Core;
 
-MultiBoot::Header * MultiBoot::sHeader = nullptr;
-MultiBoot::MemoryBlock MultiBoot::sMemoryBlocks[MaxMemoryBlocks];
+MultiBoot::Header* MultiBoot::sHeader = nullptr;
+MultiBoot::MemoryBlockArray MultiBoot::sMemoryBlocks;
 uint8_t MultiBoot::sMemoryBlockCount = 0;
 
 extern "C" {
@@ -16,12 +16,13 @@ bool MultiBoot::Initialize(uint32_t pMultiBootMagic, void * pMultiBootData)
 {
     if (pMultiBootMagic != Magic) return false;
     sHeader = reinterpret_cast<Header*>(pMultiBootData);
+    sMemoryBlocks.fill(MemoryBlock());
 
 	uint32_t kernelHead = (uint32_t)&__BOF;
 	uint32_t kernelTail = (uint32_t)&__EOF;
 	uint32_t kernelSize = kernelTail - kernelHead;
 
-    MemoryMap * memoryMap = reinterpret_cast<MemoryMap*>(sHeader->mmap_addr);
+    MemoryMap* memoryMap = reinterpret_cast<MemoryMap*>(sHeader->mmap_addr);
     uint32_t memoryMapSize = memoryMap->size + 4;
     uint32_t memoryMapCount = sHeader->mmap_length / memoryMapSize;
 

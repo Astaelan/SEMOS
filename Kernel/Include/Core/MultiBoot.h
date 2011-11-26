@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 namespace SEMOS
 {
     namespace Core
@@ -62,7 +64,9 @@ namespace SEMOS
             };
 
         private:
-            static MemoryBlock sMemoryBlocks[];
+            typedef std::array<MemoryBlock, MaxMemoryBlocks> MemoryBlockArray;
+
+            static MemoryBlockArray sMemoryBlocks;
             static uint8_t sMemoryBlockCount;
 
         public:

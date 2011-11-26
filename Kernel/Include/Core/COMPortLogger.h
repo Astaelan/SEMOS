@@ -1,11 +1,20 @@
 #pragma once
 
+#include <Core/Device.h>
+
 namespace SEMOS
 {
     namespace Core
     {
-        class COMPortLogger
+        class COMPortLogger : public Device
         {
+        public:
+            virtual bool Initialize();
+            virtual void Cleanup();
+            void WriteByte(uint8_t pByte);
+            void WriteString(const char* pString);
+            void WriteLine(const char* pLine);
+
         private:
             static const uint16_t BaseIOPort        = 0x02F8;
             static const uint16_t DataIOPort        = BaseIOPort + 0x00;
@@ -19,13 +28,7 @@ namespace SEMOS
 
             static const uint32_t WriteAttempts = 1000;
 
-            static bool IsTransmitEmpty();
-
-        public:
-            static void Initialize();
-            static void WriteByte(uint8_t pByte);
-            static void WriteString(const char * pString);
-            static void WriteLine(const char * pLine);
+            bool IsTransmitEmpty();
         };
     }
 }

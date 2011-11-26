@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 namespace SEMOS
 {
     namespace Core
@@ -55,9 +57,13 @@ namespace SEMOS
                 PresentType = 0x80
             };
 
-            static Entry sEntries[];
-            static bool sScheduled[];
-            static IDTHandler sHandlers[];
+            typedef std::array<Entry, MaxEntries> EntryArray;
+            typedef std::array<bool, MaxEntries> ScheduledArray;
+            typedef std::array<IDTHandler, MaxEntries> HandlersArray;
+
+            static EntryArray sEntries;
+            static ScheduledArray sScheduled;
+            static HandlersArray sHandlers;
 
             static void SetGate(uint8_t pIndex,
                                 uint32_t pAddress,
@@ -69,11 +75,11 @@ namespace SEMOS
         public:
 
             static void Initialize();
-            static void Schedule(uint8_t pInterrupt) { sScheduled[pInterrupt] = true; }
-            static void Unschedule(uint8_t pInterrupt) { sScheduled[pInterrupt] = false; }
+            static void Schedule(uint8_t pInterrupt);
+            static void Unschedule(uint8_t pInterrupt);
             static void WaitFor(uint8_t pInterrupt);
-            static void RegisterHandler(uint8_t pInterrupt, IDTHandler pHandler) { sHandlers[pInterrupt] = pHandler; }
-            static IDTHandler GetHandler(uint8_t pInterrupt) { return sHandlers[pInterrupt]; }
+            static void RegisterHandler(uint8_t pInterrupt, IDTHandler pHandler);
+            static IDTHandler GetHandler(uint8_t pInterrupt);
         };
     }
 }

@@ -12,6 +12,7 @@ namespace SEMOS
             static const uint16_t DataIOPort    = BaseIOPort + 0x01;
 
             static void WaitForReady();
+            static inline uint8_t FromBCD(uint8_t value) { return (((value >> 4) & 0x0F) * 10 + (value & 0x0F)); }
             static uint8_t GetSecond();
             static uint8_t GetMinute();
             static uint8_t GetHour();
@@ -24,7 +25,6 @@ namespace SEMOS
 
             static bool sBinaryCodedDecimalMode;
             static bool sMilitaryMode;
-            static uint8_t sStatus;
 
         public:
             static void Initialize();

@@ -1,14 +1,12 @@
 #include <Hardware/RTC.h>
 
 #include <PortIO.h>
-#include <BCDHelper.h>
 
 using namespace SEMOS;
 using namespace SEMOS::Hardware;
 
 bool RTC::sBinaryCodedDecimalMode = false;
 bool RTC::sMilitaryMode = false;
-uint8_t RTC::sStatus = 0x00;
 
 inline void RTC::WaitForReady()
 { do { outb(AddressIOPort, 10); } while ((inb(DataIOPort) & 0x80) != 0); }
@@ -17,10 +15,10 @@ void RTC::Initialize()
 {
     WaitForReady();
     outb(AddressIOPort, 0x0B);
-    sStatus = inb(DataIOPort);
-    if ((sStatus & 0x02) == 0x02) sMilitaryMode = true;
+    uint8_t status = inb(DataIOPort);
+    if ((status & 0x02) == 0x02) sMilitaryMode = true;
     else sMilitaryMode = false;
-    if ((sStatus & 0x04) == 0x04) sBinaryCodedDecimalMode = false;
+    if ((status & 0x04) == 0x04) sBinaryCodedDecimalMode = false;
     else sBinaryCodedDecimalMode = true;
 }
 
@@ -28,7 +26,7 @@ uint8_t RTC::GetSecond()
 {
     WaitForReady();
     outb(AddressIOPort, 0x00);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -36,7 +34,7 @@ uint8_t RTC::GetMinute()
 {
     WaitForReady();
     outb(AddressIOPort, 0x02);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -46,11 +44,11 @@ uint8_t RTC::GetHour()
     outb(AddressIOPort, 0x04);
     if (sBinaryCodedDecimalMode)
     {
-        if (sMilitaryMode) return BCDHelper_FromBCD(inb(DataIOPort));
+        if (sMilitaryMode) return FromBCD(inb(DataIOPort));
         uint8_t b = inb(DataIOPort);
-        if ((b & 0x80) == 0x80) return BCDHelper_FromBCD(b) + 12;
-        if (BCDHelper_FromBCD(b) == 12) return 0;
-        return BCDHelper_FromBCD(b);
+        if ((b & 0x80) == 0x80) return FromBCD(b) + 12;
+        if (FromBCD(b) == 12) return 0;
+        return FromBCD(b);
     }
     else
     {
@@ -66,7 +64,7 @@ uint8_t RTC::GetDayOfWeek()
 {
     WaitForReady();
     outb(AddressIOPort, 0x06);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -74,7 +72,7 @@ uint8_t RTC::GetDayOfMonth()
 {
     WaitForReady();
     outb(AddressIOPort, 0x07);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -82,7 +80,7 @@ uint8_t RTC::GetMonth()
 {
     WaitForReady();
     outb(AddressIOPort, 0x08);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -90,7 +88,7 @@ uint8_t RTC::GetYear()
 {
     WaitForReady();
     outb(AddressIOPort, 0x09);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 
@@ -98,7 +96,7 @@ uint8_t RTC::GetCentury()
 {
     WaitForReady();
     outb(AddressIOPort, 0x32);
-    if (sBinaryCodedDecimalMode) return BCDHelper_FromBCD(inb(DataIOPort));
+    if (sBinaryCodedDecimalMode) return FromBCD(inb(DataIOPort));
     return inb(DataIOPort);
 }
 

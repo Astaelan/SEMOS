@@ -22,6 +22,8 @@
     <Library Include="Source\Core.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Device.cpp" />
+    <ClCompile Include="Source\Core\DeviceManager.cpp" />
     <ClCompile Include="Source\Core\DLMalloc.cpp" />
     <ClCompile Include="Source\Core\FileSystem.cpp" />
     <ClCompile Include="Source\Hardware\ATA\ATADevice.cpp" />
@@ -31,16 +33,16 @@
     <ClCompile Include="Source\Hardware\PIC.cpp" />
     <ClCompile Include="Source\Hardware\PIT.cpp" />
     <ClCompile Include="Source\Hardware\RTC.cpp" />
-    <ClCompile Include="Source\Hardware\SystemPartition.cpp" />
+    <ClCompile Include="Source\Hardware\BootPartition.cpp" />
     <ClCompile Include="Source\Core\Console.cpp" />
     <ClCompile Include="Source\Kernel.cpp" />
     <ClCompile Include="Source\Core\MultiBoot.cpp" />
     <ClCompile Include="Source\Core\SystemCalls.cpp" />
     <ClCompile Include="Source\Core\COMPortLogger.cpp" />
-    <ClCompile Include="Source\Utility\List.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\BCDHelper.h" />
+    <ClInclude Include="Include\Core\Device.h" />
+    <ClInclude Include="Include\Core\DeviceManager.h" />
     <ClInclude Include="Include\Core\FileSystem.h" />
     <ClInclude Include="Include\Hardware\ATA\ATADevice.h" />
     <ClInclude Include="Include\Hardware\ATA\ATAPIDevice.h" />
@@ -51,13 +53,13 @@
     <ClInclude Include="Include\Hardware\PIC.h" />
     <ClInclude Include="Include\Hardware\PIT.h" />
     <ClInclude Include="Include\Hardware\RTC.h" />
-    <ClInclude Include="Include\Hardware\SystemPartition.h" />
+    <ClInclude Include="Include\Hardware\BootPartition.h" />
     <ClInclude Include="Include\Core\Console.h" />
+    <ClInclude Include="Include\JIT\Translator.h" />
     <ClInclude Include="Include\Kernel.h" />
     <ClInclude Include="Include\Core\MultiBoot.h" />
     <ClInclude Include="Include\PortIO.h" />
     <ClInclude Include="Include\Core\COMPortLogger.h" />
-    <ClInclude Include="Include\Utility\List.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FACF6CC0-B659-4FD2-8BBD-A377A66CFE7C}</ProjectGuid>
@@ -93,12 +95,13 @@
     <NMakeReBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\Include;..\SDK\include</NMakeIncludeSearchPath>
-    <IncludePath>..\SDK\include;$(IncludePath)</IncludePath>
+    <NMakeIncludeSearchPath>.\Include;..\SDK\include;..\SDK\include\c++</NMakeIncludeSearchPath>
+    <IncludePath>..\SDK\include;..\SDK\include\c++</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <SourcePath />
     <ExcludePath />
+    <NMakeForcedIncludes>cstdint</NMakeForcedIncludes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeBuildCommandLine>
@@ -107,12 +110,13 @@
     <NMakeReBuildCommandLine>"$(SolutionDir)SDK\bin\omake"</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath>.\Include;..\SDK\include</NMakeIncludeSearchPath>
-    <IncludePath>..\SDK\include;$(IncludePath)</IncludePath>
+    <NMakeIncludeSearchPath>.\Include;..\SDK\include;..\SDK\include\c++</NMakeIncludeSearchPath>
+    <IncludePath>..\SDK\include;..\SDK\include\c++</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <SourcePath />
     <ExcludePath />
+    <NMakeForcedIncludes>cstdint</NMakeForcedIncludes>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <BuildLog>

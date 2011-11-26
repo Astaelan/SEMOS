@@ -9,36 +9,35 @@ extern "C" {
 
 using namespace SEMOS;
 using namespace SEMOS::Core;
-using namespace SEMOS::Hardware;
 
-std::map<std::string, FileSystem*> * FileSystem::sFileSystems = nullptr;
-FileSystem::Descriptor * FileSystem::sDescriptors = nullptr;
+FileSystem::FileSystemMap FileSystem::sFileSystems;
+FileSystem::DescriptorArray FileSystem::sDescriptors;
 
-uint32_t STDINRead(FileSystem::Descriptor * pDescriptor, void * pData, size_t pLength)
+uint32_t STDINRead(FileSystem::Descriptor* pDescriptor, void* pData, size_t pLength)
 {
     // make a keyboard buffer, filled via interrupts, need keyboard maps from system files
     if (pDescriptor && pData && pLength) { }
     return 0;
 }
 
-uint32_t STDOUTWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
+uint32_t STDOUTWrite(FileSystem::Descriptor* pDescriptor, const void* pData, size_t pLength)
 {
     if (pDescriptor) { }
-    Console::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    Console::WriteString(reinterpret_cast<const char*>(pData), pLength);
     return pLength;
 }
 
-uint32_t STDERRWrite(FileSystem::Descriptor * pDescriptor, const void * pData, size_t pLength)
+uint32_t STDERRWrite(FileSystem::Descriptor* pDescriptor, const void* pData, size_t pLength)
 {
     if (pDescriptor) { }
-    Console::WriteString(reinterpret_cast<const char *>(pData), pLength);
+    Console::WriteString(reinterpret_cast<const char*>(pData), pLength);
     return pLength;
 }
 
 void FileSystem::Initialize()
 {
-    sFileSystems = new std::map<std::string, FileSystem*>();
-    sDescriptors = new Descriptor[MaxDescriptors]();
+    new(&sFileSystems) FileSystemMap;
+    sDescriptors.fill(Descriptor());
 
     setbuf(stdin, nullptr);
     sDescriptors[STDIN_FILENO].Active = true;
@@ -62,9 +61,18 @@ void FileSystem::Initialize()
     sDescriptors[STDERR_FILENO].Write = &STDERRWrite;
 }
 
-bool FileSystem::Register(const std::string & pRoot)
+FileSystem* FileSystem::GetFileSystem(const std::string& pRoot)
 {
-    if (sFileSystems->find(pRoot) != sFileSystems->end()) return false;
-    (*sFileSystems)[pRoot] = this;
+    FileSystemMap::iterator it = sFileSystems.find(pRoot);
+    if (it == sFileSystems.end()) return nullptr;
+    return (*it).second;
+}
+
+FileSystem::Descriptor* FileSystem::GetDescriptor(uint16_t pIndex) { return &sDescriptors[pIndex]; }
+
+bool FileSystem::Register(const std::string& pRoot)
+{
+    if (sFileSystems.find(pRoot) != sFileSystems.end()) return false;
+    sFileSystems[pRoot] = this;
     return true;
 }
