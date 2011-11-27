@@ -17,7 +17,7 @@ void * __dso_handle = nullptr;
 int open(const char * pathname, int flags, mode_t mode);
 }
 
-#include <Core/Console.h>
+#include <Core/DeviceManager.h>
 #include <Core/MultiBoot.h>
 #include <Core/FileSystem.h>
 #include <Hardware/RTC.h>
@@ -31,8 +31,8 @@ void Halt() { __asm("hlt"); }
 void Panic(const char * pMessage)
 {
     __asm("cli");
-	Console::Clear(Console::CreateAttributes(Console::Color::DarkBlack, Console::Color::LightRed));
-	Console::WriteLine(pMessage);
+	DeviceManager::GetConsole().Clear(Console::CreateAttributes(Console::Color::DarkBlack, Console::Color::LightRed));
+	DeviceManager::GetConsole().WriteLine(pMessage);
 	while (TRUE) Halt();
 }
 

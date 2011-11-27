@@ -4,6 +4,7 @@
 
 #include <Core/Device.h>
 #include <Core/COMPortLogger.h>
+#include <Core/Console.h>
 
 namespace SEMOS
 {
@@ -12,6 +13,9 @@ namespace SEMOS
         class DeviceManager
         {
         public:
+            typedef std::list<Device*> DeviceList;
+            typedef std::list<COMPortLogger*> COMPortLoggerList;
+
             static void Initialize();
 
             static bool IsMemoryAvailable(uint32_t pAddress, uint32_t pLength);
@@ -19,19 +23,23 @@ namespace SEMOS
 
             static bool Register(Device* pDevice);
             static bool RegisterCOMPortLogger(COMPortLogger* pCOMPortLogger);
+            static bool RegisterConsole(Console* pConsole);
             static void Unregister(Device* pDevice);
             static void UnregisterCOMPortLogger(COMPortLogger* pCOMPortLogger);
+            static void UnregisterConsole(Console* pConsole);
 
             static void COMPortLoggersWriteByte(uint8_t pByte);
             static void COMPortLoggersWriteString(const char* pString);
             static void COMPortLoggersWriteLine(const char* pLine);
 
+            static const DeviceList& GetDevices();
+            static Console& GetConsole();
+
         private:
-            typedef std::list<Device*> DeviceList;
-            typedef std::list<COMPortLogger*> COMPortLoggerList;
 
             static DeviceList sDevices;
             static COMPortLoggerList sCOMPortLoggers;
+            static Console* sConsole;
 
             DeviceManager() { }
         };

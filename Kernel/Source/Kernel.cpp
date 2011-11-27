@@ -19,12 +19,19 @@ void Kernel(uint32_t pMultiBootMagic,
     }
 	DeviceManager::COMPortLoggersWriteLine("See? It works!");
 
-	Console::Clear(Console::CreateAttributes(Console::Color::LightWhite, Console::Color::DarkBlack));
-    Console::WriteLine("Booting SEMOS...");
+    Console* console = new Console();
+    if (!DeviceManager::RegisterConsole(console))
+    {
+        delete console;
+        return;
+    }
+	DeviceManager::GetConsole().Clear(Console::CreateAttributes(Console::Color::LightWhite, Console::Color::DarkBlack));
+    DeviceManager::GetConsole().WriteLine("Booting SEMOS...");
 
     FileSystem::Initialize();
 	GDT::Initialize();
 	IDT::Initialize();
+
 	PIC::Initialize();
 	PIT::Initialize(1000);
 	RTC::Initialize();

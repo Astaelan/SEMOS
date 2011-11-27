@@ -10,7 +10,7 @@ namespace SEMOS
         {
         public:
             static void Initialize();
-            virtual int32_t Open(Descriptor* pDescriptor, const std::string& pPath, int32_t pFlags, mode_t pMode);
+            int32_t Open(Descriptor* pDescriptor, const std::string& pPath, int32_t pFlags, mode_t pMode);
 
         private:
             struct Cache;

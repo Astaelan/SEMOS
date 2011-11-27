@@ -1,10 +1,12 @@
 #pragma once
 
+#include <Core/Device.h>
+
 namespace SEMOS
 {
     namespace Core
     {
-        class Console
+        class Console : public Device
         {
         public:
             enum Color : uint8_t
@@ -27,14 +29,18 @@ namespace SEMOS
                 LightWhite = 0x0F
             };
 
+            Console();
+            bool Initialize();
+            void Cleanup();
+
             static uint8_t CreateAttributes(Color pForeground, Color pBackground);
-            static void MoveTo(uint8_t pColumn, uint8_t pRow);
-            static void MoveToTopLeft();
-            static void MoveToNextLine();
-            static void Clear(uint8_t pAttributes);
-            static void WriteCharacter(char pCharacter);
-            static void WriteString(const char* pString, uint32_t pLength);
-            static void WriteLine(const char* pLine);
+            void MoveTo(uint8_t pColumn, uint8_t pRow);
+            void MoveToTopLeft();
+            void MoveToNextLine();
+            void Clear(uint8_t pAttributes);
+            void WriteCharacter(char pCharacter);
+            void WriteString(const char* pString, uint32_t pLength);
+            void WriteLine(const char* pLine);
 
         private:
             static const uint32_t BaseMemory = 0x000B8000;
@@ -42,15 +48,16 @@ namespace SEMOS
             static const uint8_t DefaultRows = 25;
             static const uint8_t DefaultAttributes = 0x0F;
 
-            static uint8_t* sBaseMemory;
-            static uint8_t sColumns;
-            static uint8_t sRows;
-            static uint8_t sCursorColumn;
-            static uint8_t sCursorRow;
-            static uint8_t sAttributes;
+            uint8_t* mBaseMemory;
+            uint8_t mColumns;
+            uint8_t mRows;
+            uint8_t mCursorColumn;
+            uint8_t mCursorRow;
+            uint8_t mAttributes;
 
-            static uint8_t* GetCursor();
-            static void Advance();
+            Console(const Console&);
+            uint8_t* GetCursor();
+            void Advance();
         };
     }
 }

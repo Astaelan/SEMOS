@@ -1,9 +1,12 @@
-#include <Core/COMPortLogger.h>
-#include <Core/Console.h>
+#include <Core/DeviceManager.h>
 
 #include <PortIO.h>
 
 using namespace SEMOS::Core;
+
+COMPortLogger::COMPortLogger()
+{
+}
 
 bool COMPortLogger::Initialize()
 {

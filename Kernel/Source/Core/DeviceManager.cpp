@@ -1,11 +1,13 @@
-#include <Core/Console.h>
 #include <Core/DeviceManager.h>
+
+#include <algorithm>
 
 using namespace SEMOS;
 using namespace SEMOS::Core;
 
 DeviceManager::DeviceList DeviceManager::sDevices;
 DeviceManager::COMPortLoggerList DeviceManager::sCOMPortLoggers;
+Console* DeviceManager::sConsole = nullptr;
 
 void DeviceManager::Initialize()
 {
@@ -49,6 +51,13 @@ bool DeviceManager::RegisterCOMPortLogger(COMPortLogger* pCOMPortLogger)
     return true;
 }
 
+bool DeviceManager::RegisterConsole(Console* pConsole)
+{
+    if (!Register(pConsole)) return false;
+    sConsole = pConsole;
+    return true;
+}
+
 void DeviceManager::Unregister(Device* pDevice)
 {
     pDevice->Cleanup();
@@ -61,26 +70,33 @@ void DeviceManager::UnregisterCOMPortLogger(COMPortLogger* pCOMPortLogger)
     sCOMPortLoggers.remove(pCOMPortLogger);
 }
 
+void DeviceManager::UnregisterConsole(Console* pConsole)
+{
+    Unregister(pConsole);
+    sConsole = nullptr;
+}
+
 void DeviceManager::COMPortLoggersWriteByte(uint8_t pByte)
 {
-    for (COMPortLoggerList::iterator it = sCOMPortLoggers.begin(); it != sCOMPortLoggers.end(); ++it)
-    {
-        (*it)->WriteByte(pByte);
-    }
+    std::for_each(sCOMPortLoggers.begin(),
+                  sCOMPortLoggers.end(),
+                  [&](COMPortLogger* pLogger){ pLogger->WriteByte(pByte); });
 }
 
 void DeviceManager::COMPortLoggersWriteString(const char* pString)
 {
-    for (COMPortLoggerList::iterator it = sCOMPortLoggers.begin(); it != sCOMPortLoggers.end(); ++it)
-    {
-        (*it)->WriteString(pString);
-    }
+    std::for_each(sCOMPortLoggers.begin(),
+                  sCOMPortLoggers.end(),
+                  [&](COMPortLogger* pLogger){ pLogger->WriteString(pString); });
 }
 
 void DeviceManager::COMPortLoggersWriteLine(const char* pLine)
 {
-    for (COMPortLoggerList::iterator it = sCOMPortLoggers.begin(); it != sCOMPortLoggers.end(); ++it)
-    {
-        (*it)->WriteLine(pLine);
-    }
+    std::for_each(sCOMPortLoggers.begin(),
+                  sCOMPortLoggers.end(),
+                  [&](COMPortLogger* pLogger){ pLogger->WriteLine(pLine); });
 }
+
+const DeviceManager::DeviceList& DeviceManager::GetDevices() { return sDevices; }
+
+Console& DeviceManager::GetConsole() { return *sConsole; }
